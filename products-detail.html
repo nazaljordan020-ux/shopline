@@ -128,21 +128,24 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, collection, getDocs, query, where, limit, addDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
-            authDomain: "shopline-7a14f.firebaseapp.com",
-            projectId: "shopline-7a14f",
-            storageBucket: "shopline-7a14f.firebasestorage.app",
-            messagingSenderId: "1064176765834",
-            appId: "1:1064176765834:web:f30944d3768599d137d673",
-            measurementId: "G-49Q3CBV09C"
+  authDomain: "shopline-7a14f.firebaseapp.com",
+  projectId: "shopline-7a14f",
+  storageBucket: "shopline-7a14f.firebasestorage.app",
+  messagingSenderId: "1064176765834",
+  appId: "1:1064176765834:web:f30944d3768599d137d673",
+  measurementId: "G-49Q3CBV09C"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         let currentProduct = null;
+        let currentBuyerData = null;
 
         onAuthStateChanged(auth, (user) => {
             if (!user) {
@@ -151,6 +154,7 @@
             }
             document.getElementById('userDisplay').textContent = user.displayName || user.email;
             loadProductDetails();
+            loadBuyerData(user.uid);
         });
 
         document.getElementById('logoutBtn').addEventListener('click', async () => {
@@ -158,44 +162,73 @@
             window.location.href = 'index.html';
         });
 
-        function loadProductDetails() {
+        async function loadProductDetails() {
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = parseInt(urlParams.get('id'));
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            currentProduct = products.find(p => p.id === productId);
+            const productId = urlParams.get('id');
 
-            if (!currentProduct) {
+            if (!productId) {
                 window.location.href = 'products.html';
                 return;
             }
 
-            document.getElementById('productImage').src = currentProduct.image;
-            document.getElementById('productName').textContent = currentProduct.name;
-            document.getElementById('productPrice').textContent = currentProduct.price;
-            document.getElementById('originalPrice').textContent = currentProduct.originalPrice;
-            document.getElementById('discount').textContent = currentProduct.discount;
-            document.getElementById('rating').textContent = currentProduct.rating;
-            document.getElementById('stock').textContent = (currentProduct.sold / 1000).toFixed(0) + 'K+';
-            document.getElementById('sellerId').textContent = currentProduct.sellerId;
+            try {
+                const docRef = doc(db, 'products', productId);
+                const docSnap = await getDoc(docRef);
 
-            // Load similar products
-            const similarProducts = products.filter(p => p.id !== productId).slice(0, 6);
-            const similarGrid = document.getElementById('similarProducts');
-            similarGrid.innerHTML = '';
+                if (!docSnap.exists()) {
+                    alert('Product not found');
+                    window.location.href = 'products.html';
+                    return;
+                }
 
-            similarProducts.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
-                card.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
-                card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover">
-                    <div class="p-2">
-                        <p class="text-xs text-gray-800 mb-1 line-clamp-2">${product.name}</p>
-                        <p class="text-orange-500 font-bold text-sm">₱${product.price}</p>
-                    </div>
-                `;
-                similarGrid.appendChild(card);
-            });
+                currentProduct = { id: docSnap.id, ...docSnap.data() };
+                console.log('[v0] Loaded product:', currentProduct);
+
+                document.getElementById('productImage').src = currentProduct.image;
+                document.getElementById('productName').textContent = currentProduct.name;
+                document.getElementById('productPrice').textContent = currentProduct.price;
+                document.getElementById('originalPrice').textContent = currentProduct.originalPrice || currentProduct.price;
+                document.getElementById('discount').textContent = currentProduct.discount || 0;
+                document.getElementById('rating').textContent = currentProduct.rating || 4.5;
+                document.getElementById('stock').textContent = currentProduct.stock || '10K+';
+                document.getElementById('sellerId').textContent = currentProduct.sellerName || currentProduct.sellerId;
+
+                // Load similar products from same category or seller
+                const q = query(
+                    collection(db, 'products'),
+                    where('category', '==', currentProduct.category || 'Fittings'),
+                    limit(7)
+                );
+                const querySnapshot = await getDocs(q);
+                const similarProducts = [];
+                
+                querySnapshot.forEach((doc) => {
+                    if (doc.id !== productId) {
+                        similarProducts.push({ id: doc.id, ...doc.data() });
+                    }
+                });
+
+                const similarGrid = document.getElementById('similarProducts');
+                similarGrid.innerHTML = '';
+
+                similarProducts.slice(0, 6).forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
+                    card.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
+                    card.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover">
+                        <div class="p-2">
+                            <p class="text-xs text-gray-800 mb-1 line-clamp-2">${product.name}</p>
+                            <p class="text-orange-500 font-bold text-sm">₱${product.price}</p>
+                        </div>
+                    `;
+                    similarGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('[v0] Error loading product:', error);
+                alert('Failed to load product details');
+                window.location.href = 'products.html';
+            }
         }
 
         // Quantity controls
@@ -226,10 +259,69 @@
         });
 
         // Buy now
-        document.getElementById('buyNowBtn').addEventListener('click', () => {
-            if (currentProduct) {
-                alert(`Transaction initiated with seller: ${currentProduct.sellerId}\nProduct: ${currentProduct.name}\nQuantity: ${document.getElementById('quantity').value}`);
-                window.location.href = `seller-dashboard.html?sellerId=${currentProduct.sellerId}`;
+        document.getElementById('buyNowBtn').addEventListener('click', async () => {
+            if (currentProduct && currentBuyerData) {
+                const quantity = parseInt(document.getElementById('quantity').value);
+                const totalPrice = currentProduct.price * quantity;
+                const commissionRate = 0.05; // 5% commission
+                
+                try {
+                    // Create purchase transaction
+                    const purchaseData = {
+                        buyerId: auth.currentUser.uid,
+                        buyerName: auth.currentUser.displayName || auth.currentUser.email,
+                        productId: currentProduct.id,
+                        productName: currentProduct.name,
+                        sellerId: currentProduct.sellerId,
+                        sellerName: currentProduct.sellerName,
+                        quantity: quantity,
+                        price: currentProduct.price,
+                        totalPrice: totalPrice,
+                        createdAt: new Date().toISOString(),
+                        status: 'pending'
+                    };
+                    
+                    await addDoc(collection(db, 'purchases'), purchaseData);
+                    console.log('[v0] Purchase recorded:', purchaseData);
+                    
+                    // Award commission to referrer if buyer was referred
+                    if (currentBuyerData.referredBy) {
+                        const commission = totalPrice * commissionRate;
+                        
+                        // Get referrer data
+                        const referrerDoc = await getDoc(doc(db, 'users', currentBuyerData.referredBy));
+                        if (referrerDoc.exists()) {
+                            const referrerData = referrerDoc.data();
+                            const newTotal = (referrerData.totalCommissionEarned || 0) + commission;
+                            
+                            // Update referrer's commission
+                            await setDoc(doc(db, 'users', currentBuyerData.referredBy), {
+                                totalCommissionEarned: newTotal
+                            }, { merge: true });
+                            
+                            // Record commission transaction
+                            await addDoc(collection(db, 'commissions'), {
+                                referrerId: currentBuyerData.referredBy,
+                                referrerName: referrerData.username,
+                                buyerId: auth.currentUser.uid,
+                                buyerName: auth.currentUser.displayName || auth.currentUser.email,
+                                purchaseAmount: totalPrice,
+                                commissionAmount: commission,
+                                commissionRate: commissionRate,
+                                productName: currentProduct.name,
+                                createdAt: new Date().toISOString()
+                            });
+                            
+                            console.log(`[v0] Commission awarded: ₱${commission.toFixed(2)} to referrer ${referrerData.username}`);
+                        }
+                    }
+                    
+                    alert(`✅ Purchase successful!\n\nProduct: ${currentProduct.name}\nQuantity: ${quantity}\nTotal: ₱${totalPrice}\n\n${currentBuyerData.referredBy ? '🎁 Your referrer earned a commission on this purchase!' : ''}\n\nRedirecting to seller dashboard...`);
+                    window.location.href = `seller-dashboard.html?sellerId=${currentProduct.sellerId}`;
+                } catch (error) {
+                    console.error('[v0] Error processing purchase:', error);
+                    alert('Failed to process purchase. Please try again.');
+                }
             }
         });
 
@@ -237,6 +329,19 @@
         document.getElementById('addToCartBtn').addEventListener('click', () => {
             alert('Product added to cart!');
         });
+
+        // Function to load buyer's referral data
+        async function loadBuyerData(userId) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                if (userDoc.exists()) {
+                    currentBuyerData = userDoc.data();
+                    console.log('[v0] Buyer data loaded:', currentBuyerData);
+                }
+            } catch (error) {
+                console.error('[v0] Error loading buyer data:', error);
+            }
+        }
     </script>
 </body>
 </html>
