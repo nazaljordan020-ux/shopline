@@ -241,7 +241,7 @@ const analytics = getAnalytics(app);
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                window.location.href ='products.html';
+                window.location.href ='seller-dashboard.html';
             } catch (error) {
                 alert('Login failed: ' + error.message);
             }
