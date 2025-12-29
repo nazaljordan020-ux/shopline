@@ -57,6 +57,15 @@
                     >
                 </div>
                 <div>
+                    <input 
+                        type="text" 
+                        id="referralCode"
+                        placeholder="Referral Code (Optional)"
+                        class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-orange-500"
+                    >
+                    <p class="text-xs text-gray-500 mt-1">Enter a referral code to support someone who invited you!</p>
+                </div>
+                <div>
                     <label class="flex items-center">
                         <input type="checkbox" required class="mr-2">
                         <span class="text-sm text-gray-600">I agree to the Terms & Conditions</span>
@@ -109,17 +118,17 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, setDoc, getDoc, query, where, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
-            authDomain: "shopline-7a14f.firebaseapp.com",
-            projectId: "shopline-7a14f",
-            storageBucket: "shopline-7a14f.firebasestorage.app",
-            messagingSenderId: "1064176765834",
-            appId: "1:1064176765834:web:f30944d3768599d137d673",
-            measurementId: "G-49Q3CBV09C"
+             apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+  authDomain: "shopline-7a14f.firebaseapp.com",
+  projectId: "shopline-7a14f",
+  storageBucket: "shopline-7a14f.firebasestorage.app",
+  messagingSenderId: "1064176765834",
+  appId: "1:1064176765834:web:f30944d3768599d137d673",
+  measurementId: "G-49Q3CBV09C"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -132,19 +141,56 @@
             const email = document.getElementById('signupEmail').value;
             const username = document.getElementById('signupUsername').value;
             const password = document.getElementById('signupPassword').value;
+            const referralCode = document.getElementById('referralCode').value.trim();
 
             try {
+                // Create user account
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(userCredential.user, { displayName: username });
                 
-                // Create user document in Firestore
+                // Generate unique referral code for new user
+                const newUserReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+                
+                let referrerId = null;
+                
+                // Check if referral code exists and find referrer
+                if (referralCode) {
+                    const usersRef = collection(db, 'users');
+                    const q = query(usersRef, where('referralCode', '==', referralCode));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (!querySnapshot.empty) {
+                        referrerId = querySnapshot.docs[0].id;
+                        console.log('[v0] Valid referral code found, referrer ID:', referrerId);
+                    } else {
+                        console.log('[v0] Invalid referral code provided');
+                    }
+                }
+                
+                // Create user document with referral information
                 await setDoc(doc(db, 'users', userCredential.user.uid), {
                     username: username,
                     email: email,
                     role: 'buyer',
+                    referralCode: newUserReferralCode,
+                    referredBy: referrerId,
+                    totalCommissionEarned: 0,
+                    referralCount: 0,
                     createdAt: new Date().toISOString()
                 });
 
+                // Update referrer's referral count
+                if (referrerId) {
+                    const referrerDoc = await getDoc(doc(db, 'users', referrerId));
+                    if (referrerDoc.exists()) {
+                        const currentCount = referrerDoc.data().referralCount || 0;
+                        await setDoc(doc(db, 'users', referrerId), {
+                            referralCount: currentCount + 1
+                        }, { merge: true });
+                    }
+                }
+
+                alert(`✅ Account created successfully!\n\n🎁 Your referral code: ${newUserReferralCode}\n\nShare this code with friends to earn commission on their purchases!`);
                 window.location.href = 'products.html';
             } catch (error) {
                 alert('Sign up failed: ' + error.message);
