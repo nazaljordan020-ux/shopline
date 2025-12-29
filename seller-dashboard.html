@@ -480,7 +480,7 @@
                     sellerProducts.forEach(product => {
                         const card = document.createElement('div');
                         card.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
-                        card.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
+                        card.onclick = () => window.location.href = `products-detail.html?id=${product.id}`;
                         card.innerHTML = `
                             <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover">
                             <div class="p-2">
