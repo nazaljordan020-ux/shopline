@@ -235,7 +235,7 @@
                 products.forEach(product => {
                     const productCard = document.createElement('div');
                     productCard.className = 'bg-white rounded border hover:shadow-lg transition cursor-pointer';
-                    productCard.onclick = () => window.location.href = `products-detail.html?id=${product.id}`;
+                    productCard.onclick = () => window.location.href = `products-detail.html?id=${products.id}`;
                     
                     productCard.innerHTML = `
                         <div class="relative">
