@@ -37,6 +37,137 @@
 
     <!-- Dashboard Content -->
     <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Upload Product Form -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">📦 Upload New Product</h2>
+            
+            <form id="uploadProductForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Product Name *</label>
+                        <input 
+                            type="text" 
+                            id="newProductName"
+                            placeholder="Enter product name"
+                            required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Category *</label>
+                        <select 
+                            id="newProductCategory"
+                            required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                            <option value="">Select category</option>
+                            <option value="Fittings">Fittings & Hardware</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion">Fashion & Apparel</option>
+                            <option value="Home">Home & Living</option>
+                            <option value="Beauty">Beauty & Personal Care</option>
+                            <option value="Sports">Sports & Outdoors</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Price (₱) *</label>
+                        <input 
+                            type="number" 
+                            id="newProductPrice"
+                            placeholder="0"
+                            min="1"
+                            required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Stock Quantity *</label>
+                        <input 
+                            type="number" 
+                            id="newProductStock"
+                            placeholder="0"
+                            min="1"
+                            required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Discount (%) *</label>
+                        <input 
+                            type="number" 
+                            id="newProductDiscount"
+                            placeholder="0"
+                            min="0"
+                            max="99"
+                            value="0"
+                            required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image URL *</label>
+                    <input 
+                        type="url" 
+                        id="newProductImage"
+                        placeholder="https://example.com/image.jpg or use placeholder"
+                        required
+                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                    >
+                    <p class="text-xs text-gray-500 mt-1">Tip: Use https://via.placeholder.com/400x400?text=Your+Product for testing</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Product Description *</label>
+                    <textarea 
+                        id="newProductDescription"
+                        rows="3"
+                        placeholder="Describe your product in detail..."
+                        required
+                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                    ></textarea>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Rating (1-5)</label>
+                        <input 
+                            type="number" 
+                            id="newProductRating"
+                            placeholder="4.5"
+                            min="1"
+                            max="5"
+                            step="0.1"
+                            value="4.5"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Shipping</label>
+                        <select 
+                            id="newProductShipping"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
+                        >
+                            <option value="cod">COD Available</option>
+                            <option value="free">Free Shipping</option>
+                            <option value="standard">Standard Shipping</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition text-lg"
+                >
+                    🚀 Upload Product
+                </button>
+            </form>
+        </div>
+
         <!-- Seller Info Card -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
             <div class="flex items-center justify-between mb-6">
@@ -73,6 +204,32 @@
                     <p class="text-sm text-gray-600 mb-1">Ship On Time</p>
                     <p class="text-2xl font-bold text-orange-600">95%</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Commission Earnings Section -->
+        <div class="bg-gradient-to-r from-green-500 to-teal-500 rounded-lg shadow-lg p-6 mb-6 text-white">
+            <h2 class="text-2xl font-bold mb-4">💰 Referral Earnings</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
+                    <p class="text-sm mb-1">Total Commission</p>
+                    <p class="text-3xl font-bold">₱<span id="totalCommission">0</span></p>
+                </div>
+                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
+                    <p class="text-sm mb-1">Referrals</p>
+                    <p class="text-3xl font-bold"><span id="referralCount">0</span></p>
+                </div>
+                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
+                    <p class="text-sm mb-1">Your Referral Code</p>
+                    <p class="text-2xl font-bold"><span id="myReferralCode">LOADING</span></p>
+                    <button id="copyReferralBtn" class="mt-2 text-xs bg-white bg-opacity-30 px-3 py-1 rounded hover:bg-opacity-40 transition">
+                        📋 Copy Code
+                    </button>
+                </div>
+            </div>
+            <div class="mt-4 text-sm">
+                <p>🎁 Earn 5% commission on every purchase made by users you refer!</p>
+                <p class="mt-1">Share your referral code: <span id="shareLink" class="font-bold underline cursor-pointer">signup.html?ref=<span id="shareCode"></span></span></p>
             </div>
         </div>
 
@@ -214,16 +371,16 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
-           apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
-            authDomain: "shopline-7a14f.firebaseapp.com",
-            projectId: "shopline-7a14f",
-            storageBucket: "shopline-7a14f.firebasestorage.app",
-            messagingSenderId: "1064176765834",
-            appId: "1:1064176765834:web:f30944d3768599d137d673",
-            measurementId: "G-49Q3CBV09C"
+            apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+  authDomain: "shopline-7a14f.firebaseapp.com",
+  projectId: "shopline-7a14f",
+  storageBucket: "shopline-7a14f.firebasestorage.app",
+  messagingSenderId: "1064176765834",
+  appId: "1:1064176765834:web:f30944d3768599d137d673",
+  measurementId: "G-49Q3CBV09C"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -233,6 +390,7 @@
         let currentSellerId = null;
         let selectedProduct = null;
         let currentUser = null;
+        let currentUserData = null;
 
         onAuthStateChanged(auth, (user) => {
             if (!user) {
@@ -240,7 +398,9 @@
                 return;
             }
             currentUser = user;
+            currentSellerId = user.uid;
             document.getElementById('userDisplay').textContent = user.displayName || user.email;
+            document.getElementById('sellerName').textContent = user.displayName || 'My Shop';
             loadSellerDashboard();
         });
 
@@ -249,38 +409,102 @@
             window.location.href = 'index.html';
         });
 
-        function loadSellerDashboard() {
-            const urlParams = new URLSearchParams(window.location.search);
-            currentSellerId = urlParams.get('sellerId');
+        document.getElementById('uploadProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            document.getElementById('sellerName').textContent = `Seller: ${currentSellerId}`;
-            
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const sellerProducts = products.filter(p => p.sellerId === currentSellerId);
-            
-            if (sellerProducts.length > 0) {
-                selectedProduct = sellerProducts[0];
-                document.getElementById('productName').value = selectedProduct.name;
-                updateTotalPrice();
+            const productData = {
+                name: document.getElementById('newProductName').value,
+                category: document.getElementById('newProductCategory').value,
+                price: parseFloat(document.getElementById('newProductPrice').value),
+                stock: parseInt(document.getElementById('newProductStock').value),
+                discount: parseInt(document.getElementById('newProductDiscount').value),
+                image: document.getElementById('newProductImage').value || `https://via.placeholder.com/400x400?text=${encodeURIComponent(document.getElementById('newProductName').value)}`,
+                description: document.getElementById('newProductDescription').value,
+                rating: parseFloat(document.getElementById('newProductRating').value),
+                shipping: document.getElementById('newProductShipping').value,
+                sellerId: currentUser.uid,
+                sellerName: currentUser.displayName || currentUser.email,
+                sold: 0,
+                createdAt: new Date().toISOString()
+            };
+
+            if (productData.discount > 0) {
+                productData.originalPrice = Math.round(productData.price / (1 - productData.discount / 100));
+            } else {
+                productData.originalPrice = productData.price;
             }
 
-            // Load seller products
-            const productsGrid = document.getElementById('sellerProducts');
-            productsGrid.innerHTML = '';
+            try {
+                await addDoc(collection(db, 'products'), productData);
+                alert('✅ Product uploaded successfully! It will now appear in the products page.');
+                document.getElementById('uploadProductForm').reset();
+                loadSellerDashboard();
+            } catch (error) {
+                alert('❌ Failed to upload product: ' + error.message);
+                console.error('[v0] Upload error:', error);
+            }
+        });
 
-            sellerProducts.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
-                card.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
-                card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover">
-                    <div class="p-2">
-                        <p class="text-xs text-gray-800 mb-1 line-clamp-2">${product.name}</p>
-                        <p class="text-orange-500 font-bold text-sm">₱${product.price}</p>
-                    </div>
-                `;
-                productsGrid.appendChild(card);
-            });
+        async function loadSellerDashboard() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const viewSellerId = urlParams.get('sellerId');
+                
+                if (viewSellerId) {
+                    currentSellerId = viewSellerId;
+                    document.getElementById('sellerName').textContent = `Seller: ${viewSellerId}`;
+                }
+
+                const q = query(collection(db, 'products'), where('sellerId', '==', currentSellerId));
+                const querySnapshot = await getDocs(q);
+                const sellerProducts = [];
+                
+                querySnapshot.forEach((doc) => {
+                    sellerProducts.push({ id: doc.id, ...doc.data() });
+                });
+
+                console.log('[v0] Loaded products:', sellerProducts.length);
+
+                if (sellerProducts.length > 0) {
+                    selectedProduct = sellerProducts[0];
+                    document.getElementById('productName').value = selectedProduct.name;
+                    updateTotalPrice();
+                }
+
+                const productsGrid = document.getElementById('sellerProducts');
+                productsGrid.innerHTML = '';
+
+                if (sellerProducts.length === 0) {
+                    productsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No products uploaded yet. Upload your first product above!</p>';
+                } else {
+                    sellerProducts.forEach(product => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
+                        card.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
+                        card.innerHTML = `
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-cover">
+                            <div class="p-2">
+                                <p class="text-xs text-gray-800 mb-1 line-clamp-2">${product.name}</p>
+                                <p class="text-orange-500 font-bold text-sm">₱${product.price}</p>
+                                ${product.stock ? `<p class="text-xs text-gray-500">Stock: ${product.stock}</p>` : ''}
+                            </div>
+                        `;
+                        productsGrid.appendChild(card);
+                    });
+                }
+
+                // Load user data including referral information
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists()) {
+                    currentUserData = userDoc.data();
+                    document.getElementById('totalCommission').textContent = (currentUserData.totalCommissionEarned || 0).toFixed(2);
+                    document.getElementById('referralCount').textContent = currentUserData.referralCount || 0;
+                    document.getElementById('myReferralCode').textContent = currentUserData.referralCode || 'N/A';
+                    document.getElementById('shareCode').textContent = currentUserData.referralCode || 'N/A';
+                }
+            } catch (error) {
+                console.error('[v0] Error loading seller dashboard:', error);
+            }
         }
 
         function updateTotalPrice() {
@@ -293,7 +517,6 @@
 
         document.getElementById('transactionQty').addEventListener('input', updateTotalPrice);
 
-        // Send message
         document.getElementById('sendMessageBtn').addEventListener('click', () => {
             const message = document.getElementById('messageInput').value;
             if (message.trim()) {
@@ -302,7 +525,6 @@
             }
         });
 
-        // Handle transaction form
         document.getElementById('transactionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -329,6 +551,27 @@
             } catch (error) {
                 alert('Failed to place order: ' + error.message);
             }
+        });
+
+        // Copy referral code functionality
+        document.getElementById('copyReferralBtn').addEventListener('click', () => {
+            const code = document.getElementById('myReferralCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Referral code copied to clipboard!');
+            }).catch(() => {
+                alert('❌ Failed to copy code');
+            });
+        });
+
+        // Share link copy functionality
+        document.getElementById('shareLink').addEventListener('click', () => {
+            const code = document.getElementById('shareCode').textContent;
+            const link = `${window.location.origin}/signup.html?ref=${code}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✅ Referral link copied to clipboard!');
+            }).catch(() => {
+                alert('❌ Failed to copy link');
+            });
         });
     </script>
 </body>
