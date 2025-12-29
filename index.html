@@ -272,12 +272,12 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
-  authDomain: "shopline-7a14f.firebaseapp.com",
-  projectId: "shopline-7a14f",
-  storageBucket: "shopline-7a14f.firebasestorage.app",
-  messagingSenderId: "1064176765834",
-  appId: "1:1064176765834:web:f30944d3768599d137d673",
-  measurementId: "G-49Q3CBV09C"
+            authDomain: "shopline-7a14f.firebaseapp.com",
+            projectId: "shopline-7a14f",
+            storageBucket: "shopline-7a14f.firebasestorage.app",
+            messagingSenderId: "1064176765834",
+            appId: "1:1064176765834:web:f30944d3768599d137d673",
+            measurementId: "G-49Q3CBV09C"
         };
 
         let app, auth, db;
@@ -289,7 +289,7 @@
             console.log('[v0] Firebase initialized successfully');
         } catch (error) {
             console.error('[v0] Firebase initialization error:', error);
-            alert('Firebase initialization failed. Please check your configuration.');
+            alert('Firebase initialization failed: ' + error.message);
         }
 
         const emailTab = document.getElementById('emailTab');
@@ -366,7 +366,10 @@
                         errorMessage += 'Network error. Please check your internet connection.';
                         break;
                     case 'unavailable':
-                        errorMessage += 'Firebase is not configured properly. Please add your Firebase credentials.';
+                        errorMessage += 'Unable to connect to database. Please ensure Firestore is enabled in your Firebase Console.';
+                        break;
+                    case 'permission-denied':
+                        errorMessage += 'Database access denied. Please check your Firestore security rules.';
                         break;
                     default:
                         errorMessage += error.message;
