@@ -11,9 +11,9 @@
     <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm">
         <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <a href="#" class="hover:underline">Seller Centre</a>
-                <a href="#" class="hover:underline">Start Selling</a>
-                <a href="#" class="hover:underline">Download</a>
+                <a href="seller-dashboard.html" class="hover:underline">Seller Centre</a>
+                <a href="seller-dashboard.html" class="hover:underline">Start Selling</a>
+                <a href="seller-dashboard.html" class="hover:underline">Download</a>
                 <span>Follow us on</span>
                 <div class="flex space-x-2">
                     <span>📘</span>
@@ -33,12 +33,12 @@
     <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-2">
+                <a href="home.html" class="flex items-center space-x-2">
                     <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
                         <span class="text-orange-500 text-2xl font-bold">S</span>
                     </div>
                     <span class="text-3xl font-bold">ShopLine</span>
-                </div>
+                </a>
                 <div class="flex-1 max-w-3xl mx-8">
                     <div class="relative">
                         <input 
@@ -47,21 +47,24 @@
                             placeholder="brass fittings: 1/8', 1/4', 3/8', 1/2' male to female bsp thread adapters."
                             class="w-full px-4 py-3 rounded text-gray-800 pr-12"
                         >
-                        <button class="absolute right-0 top-0 h-full px-6 bg-orange-600 hover:bg-orange-700 rounded-r">
+                        <button id="searchBtn" class="absolute right-0 top-0 h-full px-6 bg-orange-600 hover:bg-orange-700 rounded-r">
                             🔍
                         </button>
                     </div>
                 </div>
-                <button class="text-3xl">🛒</button>
+                <button id="cartBtn" class="text-3xl relative">
+                    🛒
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-white text-orange-500 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                </button>
             </div>
             <div class="flex items-center space-x-6 text-sm">
-                <a href="#" class="hover:underline">Baggy Pants For Women</a>
-                <a href="#" class="hover:underline">One Heso Cellphone</a>
-                <a href="#" class="hover:underline">Handy Fan Rechargeable</a>
-                <a href="#" class="hover:underline">Hee Deala Make Up Set</a>
-                <a href="#" class="hover:underline">Sweet Pants</a>
-                <a href="#" class="hover:underline">Tshirt For Men</a>
-                <a href="#" class="hover:underline">Acrylic Pen Marker</a>
+                <a href="home.html" class="hover:underline">Baggy Pants For Women</a>
+                <a href="home.html" class="hover:underline">One Heso Cellphone</a>
+                <a href="home.html" class="hover:underline">Handy Fan Rechargeable</a>
+                <a href="home.html" class="hover:underline">Hee Deala Make Up Set</a>
+                <a href="home.html" class="hover:underline">Sweet Pants</a>
+                <a href="home.html" class="hover:underline">Tshirt For Men</a>
+                <a href="home.html" class="hover:underline">Acrylic Pen Marker</a>
             </div>
         </div>
     </header>
@@ -70,9 +73,9 @@
     <div class="bg-gray-100 border-b">
         <div class="max-w-7xl mx-auto px-4 py-3">
             <div class="flex items-center space-x-2 text-sm text-gray-600">
-                <span>🔍 SEARCH FILTER</span>
-                <span class="mx-2">|</span>
-                <span>💡 Search result for 'brass fittings: 1/8', 1/4', 3/8', 1/2' male to female bsp thread adapters.'</span>
+                <a href="home.html" class="hover:text-orange-500">Home</a>
+                <span class="mx-2">/</span>
+                <span id="breadcrumb">Products</span>
             </div>
         </div>
     </div>
@@ -83,6 +86,33 @@
             <!-- Sidebar Filters -->
             <aside class="w-64 flex-shrink-0">
                 <div class="bg-white rounded p-4 space-y-6">
+                    <div>
+                        <h3 class="font-semibold mb-3">Category</h3>
+                        <div class="space-y-2" id="categoryFilters">
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="" class="mr-2" checked> All
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="Electronics" class="mr-2"> Electronics
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="Fashion" class="mr-2"> Fashion
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="Food" class="mr-2"> Food
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="Home" class="mr-2"> Home
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="Beauty" class="mr-2"> Beauty
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="category" value="Sports" class="mr-2"> Sports
+                            </label>
+                        </div>
+                    </div>
+
                     <div>
                         <h3 class="font-semibold mb-3">Shipped From</h3>
                         <div class="space-y-2">
@@ -129,11 +159,11 @@
                     <div>
                         <h3 class="font-semibold mb-3">Price Range</h3>
                         <div class="flex items-center space-x-2">
-                            <input type="number" placeholder="MIN" class="w-20 px-2 py-1 border rounded text-sm">
+                            <input type="number" id="minPrice" placeholder="MIN" class="w-20 px-2 py-1 border rounded text-sm">
                             <span>—</span>
-                            <input type="number" placeholder="MAX" class="w-20 px-2 py-1 border rounded text-sm">
+                            <input type="number" id="maxPrice" placeholder="MAX" class="w-20 px-2 py-1 border rounded text-sm">
                         </div>
-                        <button class="w-full mt-2 bg-orange-500 text-white py-2 rounded text-sm hover:bg-orange-600">
+                        <button id="applyPriceFilter" class="w-full mt-2 bg-orange-500 text-white py-2 rounded text-sm hover:bg-orange-600">
                             APPLY
                         </button>
                     </div>
@@ -145,15 +175,14 @@
                 <div class="bg-gray-100 p-3 rounded mb-4 flex items-center justify-between">
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-600">Sort by</span>
-                        <button class="px-4 py-2 bg-white rounded text-sm hover:bg-gray-50">Relevance</button>
-                        <button class="px-4 py-2 bg-white rounded text-sm hover:bg-gray-50">Latest</button>
-                        <button class="px-4 py-2 bg-orange-500 text-white rounded text-sm">Top Sales</button>
-                        <button class="px-4 py-2 bg-white rounded text-sm hover:bg-gray-50">Price ∨</button>
+                        <button class="sort-btn px-4 py-2 bg-white rounded text-sm hover:bg-gray-50" data-sort="relevance">Relevance</button>
+                        <button class="sort-btn px-4 py-2 bg-white rounded text-sm hover:bg-gray-50" data-sort="latest">Latest</button>
+                        <button class="sort-btn px-4 py-2 bg-orange-500 text-white rounded text-sm" data-sort="sales">Top Sales</button>
+                        <button class="sort-btn px-4 py-2 bg-white rounded text-sm hover:bg-gray-50" data-sort="price-asc">Price Low</button>
+                        <button class="sort-btn px-4 py-2 bg-white rounded text-sm hover:bg-gray-50" data-sort="price-desc">Price High</button>
                     </div>
                     <div class="flex items-center space-x-2 text-sm">
-                        <span class="text-orange-500">1/6</span>
-                        <button class="px-3 py-1 border rounded hover:bg-gray-50">&lt;</button>
-                        <button class="px-3 py-1 border rounded hover:bg-gray-50">&gt;</button>
+                        <span id="resultsCount" class="text-orange-500">0 results</span>
                     </div>
                 </div>
 
@@ -172,7 +201,7 @@
 
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+           apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
   authDomain: "shopline-7a14f.firebaseapp.com",
   projectId: "shopline-7a14f",
   storageBucket: "shopline-7a14f.firebasestorage.app",
@@ -185,87 +214,220 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Check authentication
+        // State management
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentSort = 'sales';
+        let currentCategory = '';
+        let currentSearch = '';
+        let minPrice = null;
+        let maxPrice = null;
+
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = 'index.html';
                 return;
             }
             document.getElementById('userDisplay').textContent = user.displayName || user.email;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            currentSearch = urlParams.get('search') || '';
+            currentCategory = urlParams.get('category') || '';
+            
+            if (currentSearch) {
+                document.getElementById('searchInput').value = currentSearch;
+                document.getElementById('breadcrumb').textContent = `Search: "${currentSearch}"`;
+            } else if (currentCategory) {
+                document.getElementById('breadcrumb').textContent = currentCategory;
+                document.querySelector(`input[value="${currentCategory}"]`)?.click();
+            }
+            
             await loadProducts();
+            updateCartCount();
         });
 
-        // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             await signOut(auth);
             window.location.href = 'index.html';
         });
 
-        // Load products from Firestore
+        // Cart button functionality
+        document.getElementById('cartBtn').addEventListener('click', () => {
+            window.location.href = 'cart.html';
+        });
+
+        // Search functionality
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            currentSearch = document.getElementById('searchInput').value;
+            filterAndDisplayProducts();
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentSearch = document.getElementById('searchInput').value;
+                filterAndDisplayProducts();
+            }
+        });
+
+        // Category filter functionality
+        document.querySelectorAll('input[name="category"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                currentCategory = e.target.value;
+                filterAndDisplayProducts();
+            });
+        });
+
+        // Price filter functionality
+        document.getElementById('applyPriceFilter').addEventListener('click', () => {
+            minPrice = parseFloat(document.getElementById('minPrice').value) || null;
+            maxPrice = parseFloat(document.getElementById('maxPrice').value) || null;
+            filterAndDisplayProducts();
+        });
+
+        // Sort button functionality
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.sort-btn').forEach(b => {
+                    b.classList.remove('bg-orange-500', 'text-white');
+                    b.classList.add('bg-white');
+                });
+                btn.classList.add('bg-orange-500', 'text-white');
+                btn.classList.remove('bg-white');
+                currentSort = btn.dataset.sort;
+                filterAndDisplayProducts();
+            });
+        });
+
         async function loadProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">Loading products...</div>';
 
             try {
                 const querySnapshot = await getDocs(collection(db, 'products'));
-                const products = [];
+                allProducts = [];
                 
                 querySnapshot.forEach((doc) => {
-                    products.push({ id: doc.id, ...doc.data() });
+                    allProducts.push({ id: doc.id, ...doc.data() });
                 });
 
-                console.log('[v0] Loaded products from Firestore:', products.length);
-
-                grid.innerHTML = '';
-
-                if (products.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-full text-center py-12">
-                            <p class="text-gray-500 mb-4">No products available yet.</p>
-                            <a href="seller-dashboard.html" class="inline-block px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
-                                Upload Your First Product
-                            </a>
-                        </div>
-                    `;
-                    return;
-                }
-
-                products.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
-                    productCard.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
-                    
-                    productCard.innerHTML = `
-                        <div class="relative">
-                            <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
-                            ${product.discount > 0 ? `
-                                <div class="absolute top-2 right-2 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">
-                                    -${product.discount}%
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="p-3">
-                            <h3 class="text-sm text-gray-800 mb-2 line-clamp-2 h-10">${product.name}</h3>
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">₱${product.price}</span>
-                                    ${product.originalPrice && product.originalPrice !== product.price ? `
-                                        <span class="text-xs text-gray-400 line-through">₱${product.originalPrice}</span>
-                                    ` : ''}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between text-xs text-gray-600">
-                                <span>⭐ ${product.rating || 4.5}</span>
-                                <span>${product.sold || 0} sold</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    grid.appendChild(productCard);
-                });
+                console.log('[v0] Loaded products from Firestore:', allProducts.length);
+                filterAndDisplayProducts();
             } catch (error) {
                 console.error('[v0] Error loading products:', error);
                 grid.innerHTML = '<div class="col-span-full text-center py-8 text-red-500">Failed to load products. Please refresh the page.</div>';
+            }
+        }
+
+        // Filter and sort logic
+        function filterAndDisplayProducts() {
+            filteredProducts = allProducts.filter(product => {
+                let matches = true;
+                
+                if (currentCategory && product.category !== currentCategory) {
+                    matches = false;
+                }
+                
+                if (currentSearch) {
+                    const searchLower = currentSearch.toLowerCase();
+                    const nameMatch = product.name.toLowerCase().includes(searchLower);
+                    const descMatch = product.description?.toLowerCase().includes(searchLower);
+                    if (!nameMatch && !descMatch) {
+                        matches = false;
+                    }
+                }
+                
+                if (minPrice !== null && product.price < minPrice) {
+                    matches = false;
+                }
+                
+                if (maxPrice !== null && product.price > maxPrice) {
+                    matches = false;
+                }
+                
+                return matches;
+            });
+
+            filteredProducts.sort((a, b) => {
+                switch(currentSort) {
+                    case 'latest':
+                        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                    case 'sales':
+                        return (b.sold || 0) - (a.sold || 0);
+                    case 'price-asc':
+                        return a.price - b.price;
+                    case 'price-desc':
+                        return b.price - a.price;
+                    default:
+                        return 0;
+                }
+            });
+
+            displayProducts();
+        }
+
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            document.getElementById('resultsCount').textContent = `${filteredProducts.length} results`;
+
+            grid.innerHTML = '';
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500 mb-4">No products found matching your criteria.</p>
+                        <a href="home.html" class="inline-block px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                            Browse All Products
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded overflow-hidden shadow hover:shadow-lg transition cursor-pointer';
+                productCard.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
+                
+                productCard.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                        ${product.discount > 0 ? `
+                            <div class="absolute top-2 right-2 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">
+                                -${product.discount}%
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="p-3">
+                        <h3 class="text-sm text-gray-800 mb-2 line-clamp-2 h-10">${product.name}</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-orange-500 font-bold">₱${product.price}</span>
+                                ${product.originalPrice && product.originalPrice !== product.price ? `
+                                    <span class="text-xs text-gray-400 line-through">₱${product.originalPrice}</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-600">
+                            <span>⭐ ${product.rating || 4.5}</span>
+                            <span>${product.sold || 0} sold</span>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(productCard);
+            });
+        }
+
+        // Cart count update function
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartCount');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
             }
         }
     </script>
