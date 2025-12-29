@@ -131,7 +131,7 @@
         import { getFirestore, doc, getDoc, collection, getDocs, query, where, limit, addDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+          apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
   authDomain: "shopline-7a14f.firebaseapp.com",
   projectId: "shopline-7a14f",
   storageBucket: "shopline-7a14f.firebasestorage.app",
@@ -259,75 +259,63 @@
         });
 
         // Buy now
-        document.getElementById('buyNowBtn').addEventListener('click', async () => {
-            if (currentProduct && currentBuyerData) {
+        document.getElementById('buyNowBtn').addEventListener('click', () => {
+            if (currentProduct) {
                 const quantity = parseInt(document.getElementById('quantity').value);
-                const totalPrice = currentProduct.price * quantity;
-                const commissionRate = 0.05; // 5% commission
                 
-                try {
-                    // Create purchase transaction
-                    const purchaseData = {
-                        buyerId: auth.currentUser.uid,
-                        buyerName: auth.currentUser.displayName || auth.currentUser.email,
-                        productId: currentProduct.id,
-                        productName: currentProduct.name,
-                        sellerId: currentProduct.sellerId,
-                        sellerName: currentProduct.sellerName,
-                        quantity: quantity,
+                // Add to cart
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const existingItem = cart.find(item => item.id === currentProduct.id);
+                
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.push({
+                        id: currentProduct.id,
+                        name: currentProduct.name,
                         price: currentProduct.price,
-                        totalPrice: totalPrice,
-                        createdAt: new Date().toISOString(),
-                        status: 'pending'
-                    };
-                    
-                    await addDoc(collection(db, 'purchases'), purchaseData);
-                    console.log('[v0] Purchase recorded:', purchaseData);
-                    
-                    // Award commission to referrer if buyer was referred
-                    if (currentBuyerData.referredBy) {
-                        const commission = totalPrice * commissionRate;
-                        
-                        // Get referrer data
-                        const referrerDoc = await getDoc(doc(db, 'users', currentBuyerData.referredBy));
-                        if (referrerDoc.exists()) {
-                            const referrerData = referrerDoc.data();
-                            const newTotal = (referrerData.totalCommissionEarned || 0) + commission;
-                            
-                            // Update referrer's commission
-                            await setDoc(doc(db, 'users', currentBuyerData.referredBy), {
-                                totalCommissionEarned: newTotal
-                            }, { merge: true });
-                            
-                            // Record commission transaction
-                            await addDoc(collection(db, 'commissions'), {
-                                referrerId: currentBuyerData.referredBy,
-                                referrerName: referrerData.username,
-                                buyerId: auth.currentUser.uid,
-                                buyerName: auth.currentUser.displayName || auth.currentUser.email,
-                                purchaseAmount: totalPrice,
-                                commissionAmount: commission,
-                                commissionRate: commissionRate,
-                                productName: currentProduct.name,
-                                createdAt: new Date().toISOString()
-                            });
-                            
-                            console.log(`[v0] Commission awarded: ₱${commission.toFixed(2)} to referrer ${referrerData.username}`);
-                        }
-                    }
-                    
-                    alert(`✅ Purchase successful!\n\nProduct: ${currentProduct.name}\nQuantity: ${quantity}\nTotal: ₱${totalPrice}\n\n${currentBuyerData.referredBy ? '🎁 Your referrer earned a commission on this purchase!' : ''}\n\nRedirecting to seller dashboard...`);
-                    window.location.href = `seller-dashboard.html?sellerId=${currentProduct.sellerId}`;
-                } catch (error) {
-                    console.error('[v0] Error processing purchase:', error);
-                    alert('Failed to process purchase. Please try again.');
+                        image: currentProduct.image,
+                        sellerId: currentProduct.sellerId,
+                        quantity: quantity,
+                        variation: 'Default'
+                    });
                 }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                console.log('[v0] Added to cart:', currentProduct.name, 'x', quantity);
+                
+                // Redirect to cart page for checkout
+                window.location.href = 'cart.html';
             }
         });
 
         // Add to cart
         document.getElementById('addToCartBtn').addEventListener('click', () => {
-            alert('Product added to cart!');
+            if (currentProduct) {
+                const quantity = parseInt(document.getElementById('quantity').value);
+                
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const existingItem = cart.find(item => item.id === currentProduct.id);
+                
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.push({
+                        id: currentProduct.id,
+                        name: currentProduct.name,
+                        price: currentProduct.price,
+                        image: currentProduct.image,
+                        sellerId: currentProduct.sellerId,
+                        quantity: quantity,
+                        variation: 'Default'
+                    });
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                console.log('[v0] Added to cart:', currentProduct.name, 'x', quantity);
+                
+                alert(`✅ Added ${quantity} x ${currentProduct.name} to cart!`);
+            }
         });
 
         // Function to load buyer's referral data
