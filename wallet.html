@@ -1,418 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopLine - Wallet</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet - ShareVest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #15803d 0%, #22c55e 50%, #16a34a 100%); }
+  </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Created complete wallet and referral commission tracking system -->
-    
-    <!-- Top Bar -->
-    <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm">
-        <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <a href="seller-dashboard.html" class="hover:underline">Seller Dashboard</a>
-                <a href="orders.html" class="hover:underline">Orders</a>
-                <a href="home.html" class="hover:underline">Shop</a>
-            </div>
-            <div class="flex items-center space-x-4">
-                <span id="userDisplay"></span>
-                <button id="logoutBtn" class="hover:underline">Logout</button>
-            </div>
-        </div>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Header -->
+  <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="text-2xl font-bold flex items-center gap-2">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          ShareVest
+        </a>
+        <nav class="flex items-center space-x-4">
+          <a href="dashboard.html" class="hover:bg-white/10 px-4 py-2 rounded-lg transition">Dashboard</a>
+          <a href="referrals.html" class="hover:bg-white/10 px-4 py-2 rounded-lg transition">Referrals</a>
+          <a href="wallet.html" class="bg-white/20 px-4 py-2 rounded-lg font-medium">Wallet</a>
+          <button onclick="signOut()" class="text-green-200 hover:text-white transition">Sign Out</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Balance Card -->
+    <div class="gradient-bg rounded-2xl p-8 text-white mb-8">
+      <p class="text-green-200 mb-2">Available Balance</p>
+      <h1 class="text-5xl font-bold mb-4" id="available-balance">₱0.00</h1>
+      <div class="flex flex-wrap gap-4">
+        <button onclick="showWithdrawModal()" class="bg-white text-green-700 px-6 py-3 rounded-xl font-bold hover:bg-green-50 transition">
+          Withdraw
+        </button>
+        <button onclick="viewTransactions()" class="bg-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/30 transition">
+          View History
+        </button>
+      </div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex items-center space-x-4">
-                <a href="home.html" class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                        <span class="text-white text-xl font-bold">S</span>
-                    </div>
-                    <span class="text-2xl font-bold text-gray-800">ShopLine</span>
-                </a>
-                <span class="text-xl text-gray-600">Wallet</span>
-            </div>
+    <!-- Stats Grid -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-2xl p-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total Earnings</p>
+            <p class="text-2xl font-bold text-gray-800" id="total-earnings">₱0</p>
+          </div>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <div class="grid grid-cols-3 gap-6 mb-6">
-            <!-- Wallet Balance -->
-            <div class="col-span-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-lg p-8 text-white">
-                <h2 class="text-xl font-semibold mb-2">Total Balance</h2>
-                <p class="text-5xl font-bold mb-6">₱<span id="totalBalance">0.00</span></p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
-                        <p class="text-sm mb-1">Sales Earnings</p>
-                        <p class="text-2xl font-bold">₱<span id="salesEarnings">0.00</span></p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
-                        <p class="text-sm mb-1">Referral Commissions</p>
-                        <p class="text-2xl font-bold">₱<span id="referralEarnings">0.00</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Withdrawal -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">Withdraw Funds</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
-                        <input 
-                            type="number" 
-                            id="withdrawAmount"
-                            placeholder="0.00"
-                            min="100"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"
-                        >
-                        <p class="text-xs text-gray-500 mt-1">Minimum withdrawal: ₱100</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Bank Account</label>
-                        <select id="bankAccount" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
-                            <option value="">Select account</option>
-                            <option value="bdo">BDO - ***1234</option>
-                            <option value="bpi">BPI - ***5678</option>
-                            <option value="gcash">GCash - ***9012</option>
-                        </select>
-                    </div>
-                    <button 
-                        id="withdrawBtn"
-                        class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition"
-                    >
-                        Withdraw Now
-                    </button>
-                </div>
-            </div>
+      </div>
+      <div class="bg-white rounded-2xl p-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total Withdrawn</p>
+            <p class="text-2xl font-bold text-gray-800" id="total-withdrawn">₱0</p>
+          </div>
         </div>
-
-        <!-- Referral Program -->
-        <div class="bg-gradient-to-r from-green-500 to-teal-500 rounded-lg shadow-lg p-6 mb-6 text-white">
-            <h2 class="text-2xl font-bold mb-4">Referral Program</h2>
-            <div class="grid grid-cols-4 gap-4 mb-4">
-                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
-                    <p class="text-sm mb-1">Your Code</p>
-                    <p class="text-2xl font-bold"><span id="myReferralCode">LOADING</span></p>
-                    <button id="copyCodeBtn" class="mt-2 text-xs bg-white bg-opacity-30 px-3 py-1 rounded hover:bg-opacity-40 transition">
-                        Copy Code
-                    </button>
-                </div>
-                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
-                    <p class="text-sm mb-1">Total Referrals</p>
-                    <p class="text-3xl font-bold"><span id="totalReferrals">0</span></p>
-                </div>
-                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
-                    <p class="text-sm mb-1">Commission Rate</p>
-                    <p class="text-3xl font-bold">5%</p>
-                </div>
-                <div class="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-sm">
-                    <p class="text-sm mb-1">Total Earned</p>
-                    <p class="text-2xl font-bold">₱<span id="totalCommission">0.00</span></p>
-                </div>
-            </div>
-            <div class="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
-                <p class="text-sm">Share your referral code with friends! When they sign up and make purchases, you earn 5% commission on every order.</p>
-                <div class="mt-3 flex gap-2">
-                    <input 
-                        type="text" 
-                        id="referralLink"
-                        readonly
-                        class="flex-1 px-3 py-2 bg-white bg-opacity-30 rounded text-white placeholder-white"
-                        placeholder="Your referral link will appear here"
-                    >
-                    <button id="shareBtn" class="px-4 py-2 bg-white bg-opacity-30 rounded hover:bg-opacity-40 transition">
-                        Share
-                    </button>
-                </div>
-            </div>
+      </div>
+      <div class="bg-white rounded-2xl p-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Pending</p>
+            <p class="text-2xl font-bold text-gray-800" id="pending-amount">₱0</p>
+          </div>
         </div>
-
-        <!-- Transaction History -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-gray-800">Transaction History</h3>
-                <div class="flex gap-2">
-                    <button class="transaction-filter px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-semibold" data-type="all">All</button>
-                    <button class="transaction-filter px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200" data-type="sales">Sales</button>
-                    <button class="transaction-filter px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200" data-type="commission">Commissions</button>
-                    <button class="transaction-filter px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200" data-type="withdrawal">Withdrawals</button>
-                </div>
-            </div>
-            <div id="transactionsList" class="divide-y">
-                <!-- Transactions will be loaded here -->
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, query, where, getDocs, doc, getDoc, addDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    <!-- Withdrawal Status -->
+    <div id="withdrawal-status" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-amber-800">Withdrawal Not Available Yet</h3>
+          <p class="text-amber-700 text-sm" id="withdrawal-message">Your account must be active and matured to withdraw earnings.</p>
+        </div>
+      </div>
+    </div>
 
-        const firebaseConfig = {
-         apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
-  authDomain: "shopline-7a14f.firebaseapp.com",
-  projectId: "shopline-7a14f",
-  storageBucket: "shopline-7a14f.firebasestorage.app",
-  messagingSenderId: "1064176765834",
-  appId: "1:1064176765834:web:f30944d3768599d137d673",
-  measurementId: "G-49Q3CBV09C"
+    <!-- Transaction History -->
+    <div class="bg-white rounded-2xl p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Transaction History</h2>
+      <div id="transactions-list" class="space-y-4">
+        <div class="text-center py-12 text-gray-500">
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <p>No transactions yet</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Withdraw Modal -->
+  <div id="withdraw-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
+      <button onclick="hideWithdrawModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      <div class="p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Withdraw Earnings</h2>
+        <p class="text-gray-600 mb-6">Enter amount and select payout method</p>
+        
+        <form id="withdraw-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">₱</span>
+              <input type="number" id="withdraw-amount" required min="100" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Available: <span id="modal-balance">₱0</span></p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Payout Method</label>
+            <div class="space-y-2">
+              <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-green-500 transition">
+                <input type="radio" name="payout" value="gcash" class="mr-3" checked>
+                <span class="font-medium">GCash</span>
+              </label>
+              <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:border-green-500 transition">
+                <input type="radio" name="payout" value="bank" class="mr-3">
+                <span class="font-medium">Bank Transfer</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="gcash-fields">
+            <label class="block text-sm font-medium text-gray-700 mb-2">GCash Number</label>
+            <input type="tel" id="gcash-number" placeholder="09XX XXX XXXX" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+
+          <div id="bank-fields" class="hidden space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
+              <select id="bank-name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option>BDO</option>
+                <option>BPI</option>
+                <option>Metrobank</option>
+                <option>UnionBank</option>
+                <option>LandBank</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+              <input type="text" id="bank-account" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
+              <input type="text" id="bank-account-name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition">
+            Submit Withdrawal
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+      authDomain: "shopline-7a14f.firebaseapp.com",
+      projectId: "shopline-7a14f",
+      storageBucket: "shopline-7a14f.firebasestorage.app",
+      messagingSenderId: "1064176765834",
+      appId: "1:1064176765834:web:f30944d3768599d137d673",
+      measurementId: "G-49Q3CBV09C"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser = null;
+    let shareholderData = null;
+
+    auth.onAuthStateChanged(async user => {
+      if (user) {
+        currentUser = user;
+        await loadWalletData();
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    async function loadWalletData() {
+      try {
+        const doc = await db.collection('shareholders').doc(currentUser.uid).get();
+        if (doc.exists) {
+          shareholderData = doc.data();
+          renderWallet();
+          loadTransactions();
+        }
+      } catch (error) {
+        console.error('Error loading wallet:', error);
+      }
+    }
+
+    function renderWallet() {
+      const totalEarnings = shareholderData.totalEarnings || 0;
+      const totalWithdrawn = shareholderData.totalWithdrawn || 0;
+      const pending = shareholderData.pendingWithdrawal || 0;
+      const available = totalEarnings - totalWithdrawn - pending;
+
+      document.getElementById('available-balance').textContent = '₱' + available.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+      document.getElementById('total-earnings').textContent = '₱' + totalEarnings.toLocaleString();
+      document.getElementById('total-withdrawn').textContent = '₱' + totalWithdrawn.toLocaleString();
+      document.getElementById('pending-amount').textContent = '₱' + pending.toLocaleString();
+      document.getElementById('modal-balance').textContent = '₱' + available.toLocaleString();
+
+      // Check withdrawal eligibility
+      if (shareholderData.status !== 'active') {
+        document.getElementById('withdrawal-status').classList.remove('hidden');
+        document.getElementById('withdrawal-message').textContent = 'Your account must be active to withdraw earnings.';
+      } else if (shareholderData.maturityDate && new Date(shareholderData.maturityDate) > new Date()) {
+        document.getElementById('withdrawal-status').classList.remove('hidden');
+        document.getElementById('withdrawal-message').textContent = `Your account will mature on ${new Date(shareholderData.maturityDate).toLocaleDateString()}. Withdrawals will be available after maturity.`;
+      }
+    }
+
+    async function loadTransactions() {
+      try {
+        const snapshot = await db.collection('shareholders').doc(currentUser.uid).collection('transactions').orderBy('date', 'desc').get();
+        const container = document.getElementById('transactions-list');
+        
+        if (snapshot.empty) {
+          return;
+        }
+
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+          const tx = doc.data();
+          const isCredit = tx.type === 'earning' || tx.type === 'bonus';
+          
+          container.innerHTML += `
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 ${isCredit ? 'bg-green-100' : 'bg-red-100'} rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 ${isCredit ? 'text-green-600' : 'text-red-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${isCredit ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>' : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>'}
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-800">${tx.description || tx.type}</p>
+                  <p class="text-sm text-gray-500">${new Date(tx.date).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <p class="font-bold ${isCredit ? 'text-green-600' : 'text-red-600'}">
+                ${isCredit ? '+' : '-'}₱${Math.abs(tx.amount).toLocaleString()}
+              </p>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error('Error loading transactions:', error);
+      }
+    }
+
+    function showWithdrawModal() {
+      // Check eligibility
+      if (shareholderData.status !== 'active') {
+        alert('Your account must be active to withdraw.');
+        return;
+      }
+      if (shareholderData.maturityDate && new Date(shareholderData.maturityDate) > new Date()) {
+        alert('Withdrawals are only available after your account matures.');
+        return;
+      }
+
+      document.getElementById('withdraw-modal').classList.remove('hidden');
+      document.getElementById('withdraw-modal').classList.add('flex');
+    }
+
+    function hideWithdrawModal() {
+      document.getElementById('withdraw-modal').classList.add('hidden');
+      document.getElementById('withdraw-modal').classList.remove('flex');
+    }
+
+    // Toggle payout method fields
+    document.querySelectorAll('input[name="payout"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'gcash') {
+          document.getElementById('gcash-fields').classList.remove('hidden');
+          document.getElementById('bank-fields').classList.add('hidden');
+        } else {
+          document.getElementById('gcash-fields').classList.add('hidden');
+          document.getElementById('bank-fields').classList.remove('hidden');
+        }
+      });
+    });
+
+    document.getElementById('withdraw-form').onsubmit = async (e) => {
+      e.preventDefault();
+      
+      const amount = parseFloat(document.getElementById('withdraw-amount').value);
+      const available = (shareholderData.totalEarnings || 0) - (shareholderData.totalWithdrawn || 0) - (shareholderData.pendingWithdrawal || 0);
+      
+      if (amount > available) {
+        alert('Insufficient balance');
+        return;
+      }
+      
+      if (amount < 100) {
+        alert('Minimum withdrawal is ₱100');
+        return;
+      }
+
+      const payoutMethod = document.querySelector('input[name="payout"]:checked').value;
+      let payoutDetails = {};
+
+      if (payoutMethod === 'gcash') {
+        payoutDetails = { type: 'gcash', number: document.getElementById('gcash-number').value };
+      } else {
+        payoutDetails = {
+          type: 'bank',
+          bank: document.getElementById('bank-name').value,
+          accountNumber: document.getElementById('bank-account').value,
+          accountName: document.getElementById('bank-account-name').value
         };
+      }
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null;
-        let userWallet = { salesEarnings: 0, referralEarnings: 0, totalBalance: 0 };
-        let transactions = [];
-        let currentFilter = 'all';
-
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = 'index.html';
-                return;
-            }
-            currentUser = user;
-            document.getElementById('userDisplay').textContent = user.displayName || user.email;
-            await loadWalletData();
+      try {
+        // Create withdrawal request
+        await db.collection('shareholders').doc(currentUser.uid).collection('transactions').add({
+          type: 'withdrawal',
+          amount: amount,
+          status: 'pending',
+          payoutDetails,
+          date: new Date().toISOString()
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await signOut(auth);
-            window.location.href = 'index.html';
+        // Update pending amount
+        await db.collection('shareholders').doc(currentUser.uid).update({
+          pendingWithdrawal: firebase.firestore.FieldValue.increment(amount)
         });
 
-        async function loadWalletData() {
-            try {
-                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    document.getElementById('myReferralCode').textContent = userData.referralCode || 'N/A';
-                    document.getElementById('totalReferrals').textContent = userData.referralCount || 0;
-                    document.getElementById('totalCommission').textContent = (userData.totalCommissionEarned || 0).toFixed(2);
-                    
-                    const referralLink = `${window.location.origin}/signup.html?ref=${userData.referralCode}`;
-                    document.getElementById('referralLink').value = referralLink;
-                    
-                    userWallet.referralEarnings = userData.totalCommissionEarned || 0;
-                }
+        hideWithdrawModal();
+        alert('Withdrawal request submitted! Processing time: 1-3 business days.');
+        location.reload();
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    };
 
-                const ordersRef = collection(db, 'orders');
-                const q = query(ordersRef, where('sellerId', '==', currentUser.uid), where('status', '==', 'Completed'));
-                const ordersSnapshot = await getDocs(q);
-                
-                let salesTotal = 0;
-                ordersSnapshot.forEach((doc) => {
-                    salesTotal += doc.data().total || 0;
-                });
-                
-                userWallet.salesEarnings = salesTotal;
-                userWallet.totalBalance = userWallet.salesEarnings + userWallet.referralEarnings;
-                
-                document.getElementById('salesEarnings').textContent = userWallet.salesEarnings.toFixed(2);
-                document.getElementById('referralEarnings').textContent = userWallet.referralEarnings.toFixed(2);
-                document.getElementById('totalBalance').textContent = userWallet.totalBalance.toFixed(2);
+    function viewTransactions() {
+      document.getElementById('transactions-list').scrollIntoView({ behavior: 'smooth' });
+    }
 
-                await loadTransactions();
-            } catch (error) {
-                console.error('[v0] Error loading wallet data:', error);
-            }
-        }
+    function signOut() {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    }
 
-        async function loadTransactions() {
-            try {
-                transactions = [];
-
-                const ordersRef = collection(db, 'orders');
-                const ordersQuery = query(ordersRef, where('sellerId', '==', currentUser.uid));
-                const ordersSnapshot = await getDocs(ordersQuery);
-                
-                ordersSnapshot.forEach((doc) => {
-                    const order = doc.data();
-                    if (order.status === 'Completed') {
-                        transactions.push({
-                            type: 'sales',
-                            amount: order.total,
-                            description: `Order #${doc.id.substring(0, 8).toUpperCase()}`,
-                            date: order.createdAt,
-                            status: 'completed'
-                        });
-                    }
-                });
-
-                const commissionsRef = collection(db, 'commissions');
-                const commissionsQuery = query(commissionsRef, where('referrerId', '==', currentUser.uid));
-                const commissionsSnapshot = await getDocs(commissionsQuery);
-                
-                commissionsSnapshot.forEach((doc) => {
-                    const commission = doc.data();
-                    transactions.push({
-                        type: 'commission',
-                        amount: commission.amount,
-                        description: `Referral commission from purchase`,
-                        date: commission.createdAt,
-                        status: 'completed'
-                    });
-                });
-
-                const withdrawalsRef = collection(db, 'withdrawals');
-                const withdrawalsQuery = query(withdrawalsRef, where('userId', '==', currentUser.uid));
-                const withdrawalsSnapshot = await getDocs(withdrawalsQuery);
-                
-                withdrawalsSnapshot.forEach((doc) => {
-                    const withdrawal = doc.data();
-                    transactions.push({
-                        type: 'withdrawal',
-                        amount: -withdrawal.amount,
-                        description: `Withdrawal to ${withdrawal.bankAccount}`,
-                        date: withdrawal.createdAt,
-                        status: withdrawal.status
-                    });
-                });
-
-                transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                console.log('[v0] Loaded transactions:', transactions.length);
-                displayTransactions();
-            } catch (error) {
-                console.error('[v0] Error loading transactions:', error);
-            }
-        }
-
-        document.querySelectorAll('.transaction-filter').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.transaction-filter').forEach(b => {
-                    b.classList.remove('bg-orange-500', 'text-white');
-                    b.classList.add('bg-gray-100', 'text-gray-700');
-                });
-                btn.classList.add('bg-orange-500', 'text-white');
-                btn.classList.remove('bg-gray-100', 'text-gray-700');
-                currentFilter = btn.dataset.type;
-                displayTransactions();
-            });
-        });
-
-        function displayTransactions() {
-            const container = document.getElementById('transactionsList');
-            
-            const filtered = currentFilter === 'all' 
-                ? transactions 
-                : transactions.filter(t => t.type === currentFilter);
-
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="py-12 text-center">
-                        <p class="text-gray-500">No transactions found</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filtered.map(transaction => {
-                const isPositive = transaction.amount > 0;
-                const typeIcons = {
-                    sales: '💰',
-                    commission: '🎁',
-                    withdrawal: '🏦'
-                };
-                const typeColors = {
-                    sales: 'text-blue-600',
-                    commission: 'text-green-600',
-                    withdrawal: 'text-orange-600'
-                };
-
-                return `
-                    <div class="py-4 flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-2xl">
-                                ${typeIcons[transaction.type]}
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-800">${transaction.description}</p>
-                                <p class="text-sm text-gray-500">${new Date(transaction.date).toLocaleDateString()}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-bold ${isPositive ? 'text-green-600' : 'text-red-600'}">
-                                ${isPositive ? '+' : ''}₱${Math.abs(transaction.amount).toFixed(2)}
-                            </p>
-                            <p class="text-xs ${typeColors[transaction.type]} capitalize">${transaction.type}</p>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        document.getElementById('copyCodeBtn').addEventListener('click', () => {
-            const code = document.getElementById('myReferralCode').textContent;
-            navigator.clipboard.writeText(code);
-            alert('Referral code copied to clipboard!');
-        });
-
-        document.getElementById('shareBtn').addEventListener('click', () => {
-            const link = document.getElementById('referralLink').value;
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Join ShopLine with my referral code',
-                    text: 'Sign up on ShopLine and get amazing deals!',
-                    url: link
-                });
-            } else {
-                navigator.clipboard.writeText(link);
-                alert('Referral link copied to clipboard!');
-            }
-        });
-
-        document.getElementById('withdrawBtn').addEventListener('click', async () => {
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
-            const bankAccount = document.getElementById('bankAccount').value;
-
-            if (!amount || amount < 100) {
-                alert('Minimum withdrawal amount is ₱100');
-                return;
-            }
-
-            if (!bankAccount) {
-                alert('Please select a bank account');
-                return;
-            }
-
-            if (amount > userWallet.totalBalance) {
-                alert('Insufficient balance');
-                return;
-            }
-
-            if (!confirm(`Withdraw ₱${amount.toFixed(2)} to ${bankAccount}?`)) return;
-
-            try {
-                await addDoc(collection(db, 'withdrawals'), {
-                    userId: currentUser.uid,
-                    amount: amount,
-                    bankAccount: bankAccount,
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                });
-
-                console.log('[v0] Withdrawal request created');
-                alert('Withdrawal request submitted! Funds will be processed within 1-3 business days.');
-                
-                document.getElementById('withdrawAmount').value = '';
-                document.getElementById('bankAccount').value = '';
-                
-                await loadWalletData();
-            } catch (error) {
-                console.error('[v0] Withdrawal error:', error);
-                alert('Failed to process withdrawal. Please try again.');
-            }
-        });
-    </script>
+    document.getElementById('withdraw-modal').onclick = (e) => {
+      if (e.target.id === 'withdraw-modal') hideWithdrawModal();
+    };
+  </script>
 </body>
 </html>
