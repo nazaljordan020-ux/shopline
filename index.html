@@ -1,508 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopLine - Log In</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareVest - Digital Investment Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' },
+            accent: { 500: '#f59e0b', 600: '#d97706' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #15803d 0%, #22c55e 50%, #16a34a 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+  </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                    <span class="text-white text-2xl font-bold">S</span>
-                </div>
-                <span class="text-2xl font-bold text-gray-800">ShopLine</span>
-                <span class="ml-4 text-gray-600">Log In</span>
-            </div>
-            <div class="text-sm text-gray-600">
-                <span class="text-orange-500 cursor-pointer hover:text-orange-600">Need help?</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Login Section -->
-    <div class="min-h-screen bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center px-4 py-12">
-        <div class="flex items-center gap-12 max-w-5xl">
-            <!-- Left Side - Branding -->
-            <div class="text-white hidden md:block">
-                <div class="mb-6">
-                    <div class="w-32 h-32 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-2xl">
-                        <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center">
-                            <span class="text-white text-5xl font-bold">S</span>
-                        </div>
-                    </div>
-                </div>
-                <h1 class="text-5xl font-bold mb-4">ShopLine</h1>
-                <p class="text-2xl mb-2">The leading online shopping platform</p>
-                <p class="text-xl">in Southeast Asia and Taiwan</p>
-            </div>
-
-            <!-- Right Side - Login Form -->
-            <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-semibold text-gray-800">Log In</h2>
-                    <button class="text-orange-500 hover:text-orange-600 text-sm font-semibold flex items-center gap-2">
-                        Log in with QR
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Added tab navigation for Email and Phone login -->
-                <div class="flex mb-6 border-b border-gray-200">
-                    <button 
-                        id="emailTab" 
-                        class="flex-1 pb-3 text-center font-medium border-b-2 border-orange-500 text-orange-500"
-                    >
-                        Email / Username
-                    </button>
-                    <button 
-                        id="phoneTab" 
-                        class="flex-1 pb-3 text-center font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700"
-                    >
-                        Phone Number
-                    </button>
-                </div>
-
-                <!-- Email login form -->
-                <form id="loginForm" class="space-y-4">
-                    <div>
-                        <input 
-                            type="email" 
-                            id="loginEmail"
-                            placeholder="Phone number / Username / Email"
-                            required
-                            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-orange-500"
-                        >
-                    </div>
-                    <div class="relative">
-                        <input 
-                            type="password" 
-                            id="loginPassword"
-                            placeholder="Password"
-                            required
-                            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-orange-500 pr-12"
-                        >
-                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <button 
-                        type="submit"
-                        class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded font-semibold hover:from-orange-600 hover:to-red-600 transition uppercase"
-                    >
-                        LOG IN
-                    </button>
-                </form>
-
-                <!-- Phone OTP login form (hidden by default) -->
-                <form id="phoneLoginForm" class="space-y-4 hidden">
-                    <div>
-                        <input 
-                            type="tel" 
-                            id="phoneNumber"
-                            placeholder="Phone number"
-                            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-orange-500"
-                        >
-                    </div>
-                    <button 
-                        type="button"
-                        id="sendOtpBtn"
-                        class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded font-semibold hover:from-orange-600 hover:to-red-600 transition uppercase"
-                    >
-                        SEND OTP
-                    </button>
-                    <div id="otpSection" class="hidden space-y-4">
-                        <div>
-                            <input 
-                                type="text" 
-                                id="otpCode"
-                                placeholder="Enter 6-digit OTP"
-                                maxlength="6"
-                                class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-orange-500"
-                            >
-                        </div>
-                        <button 
-                            type="submit"
-                            class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded font-semibold hover:from-orange-600 hover:to-red-600 transition uppercase"
-                        >
-                            VERIFY & LOGIN
-                        </button>
-                    </div>
-                </form>
-
-                <div class="flex justify-between items-center mt-4 text-sm">
-                    <a href="#" class="text-blue-600 hover:text-blue-700">Forgot Password</a>
-                    <a href="#" class="text-blue-600 hover:text-blue-700">Login with SMS</a>
-                </div>
-
-                <div class="mt-6">
-                    <div class="relative">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">OR</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <!-- Added functional social login buttons -->
-                    <button id="facebookLoginBtn" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
-                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        </svg>
-                        Facebook
-                    </button>
-                    <button id="googleLoginBtn" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
-                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Google
-                    </button>
-                </div>
-
-                <div class="mt-6 text-center text-sm text-gray-600">
-                    New to ShopLine? <a href="signup.html" class="text-orange-500 hover:text-orange-600 font-semibold">Sign Up</a>
-                </div>
-            </div>
-        </div>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="text-2xl font-bold flex items-center gap-2">
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          ShareVest
+        </a>
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="#features" class="hover:text-green-200 transition">Features</a>
+          <a href="#how-it-works" class="hover:text-green-200 transition">How It Works</a>
+          <a href="#partners" class="hover:text-green-200 transition">Partners</a>
+          <div id="auth-section"></div>
+        </nav>
+        <button id="mobile-menu-btn" class="md:hidden text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <!-- Footer -->
-    <footer class="bg-gray-100 py-8">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-4 gap-8 mb-8">
-                <div>
-                    <h3 class="font-semibold text-gray-800 mb-3">CUSTOMER SERVICE</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a href="#" class="hover:text-orange-500">Help Centre</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Cares PH</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Payment Methods</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopeePay</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Coins</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Order Tracking</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Free Shipping</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Return & Refund</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Guarantee</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Overseas Product</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Contact Us</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-800 mb-3">ABOUT SHOPLINE</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a href="#" class="hover:text-orange-500">About Us</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Blog</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Careers</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Policies</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Seller Centre</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Flash Deals</a></li>
-                        <li><a href="#" class="hover:text-orange-500">ShopLine Mall</a></li>
-                        <li><a href="#" class="hover:text-orange-500">Media Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-800 mb-3">PAYMENT</h3>
-                    <div class="grid grid-cols-3 gap-2 mb-4">
-                        <div class="bg-white p-2 rounded border">💳</div>
-                        <div class="bg-white p-2 rounded border">💳</div>
-                        <div class="bg-white p-2 rounded border">💳</div>
-                        <div class="bg-white p-2 rounded border">💳</div>
-                        <div class="bg-white p-2 rounded border">💳</div>
-                        <div class="bg-white p-2 rounded border">💳</div>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 mb-3">LOGISTICS</h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-white p-2 rounded border text-xs">SPX</div>
-                        <div class="bg-white p-2 rounded border text-xs">Flash</div>
-                        <div class="bg-white p-2 rounded border text-xs">J&T</div>
-                        <div class="bg-white p-2 rounded border text-xs">2GO</div>
-                        <div class="bg-white p-2 rounded border text-xs">Xde</div>
-                        <div class="bg-white p-2 rounded border text-xs">DPE</div>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-800 mb-3">FOLLOW US</h3>
-                    <ul class="space-y-2 text-sm text-gray-600 mb-4">
-                        <li><a href="#" class="hover:text-orange-500 flex items-center"><span class="mr-2">📘</span> Facebook</a></li>
-                        <li><a href="#" class="hover:text-orange-500 flex items-center"><span class="mr-2">📷</span> Instagram</a></li>
-                        <li><a href="#" class="hover:text-orange-500 flex items-center"><span class="mr-2">🐦</span> Twitter</a></li>
-                        <li><a href="#" class="hover:text-orange-500 flex items-center"><span class="mr-2">🔗</span> LinkedIn</a></li>
-                    </ul>
-                    <h3 class="font-semibold text-gray-800 mb-3">SHOPLINE APP DOWNLOAD</h3>
-                    <div class="flex items-center gap-2">
-                        <div class="bg-white p-2 rounded border">
-                            <div class="w-16 h-16 bg-gray-200 flex items-center justify-center text-xs">QR Code</div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="bg-white px-3 py-1 rounded border text-xs flex items-center">
-                                <span class="mr-2">🍎</span> App Store
-                            </div>
-                            <div class="bg-white px-3 py-1 rounded border text-xs flex items-center">
-                                <span class="mr-2">🤖</span> Google Play
-                            </div>
-                            <div class="bg-white px-3 py-1 rounded border text-xs flex items-center">
-                                <span class="mr-2">📱</span> App Gallery
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <!-- Hero Section -->
+  <section class="gradient-bg text-white py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+            Invest Smart,<br>Grow Together
+          </h1>
+          <p class="text-lg md:text-xl text-green-100 mb-8">
+            Join our shareholder-based digital platform. Choose your share percentage, select your lock-in period, and earn from partner business performance.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button onclick="showRegisterModal()" class="bg-white text-green-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition shadow-lg">
+              Start Investing
+            </button>
+            <a href="#how-it-works" class="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition text-center">
+              Learn More
+            </a>
+          </div>
+          <div class="mt-8 flex items-center gap-6 text-sm">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span>Transparent</span>
             </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span>Secure</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span>Long-term</span>
+            </div>
+          </div>
         </div>
-    </footer>
+        <div class="hidden md:block">
+          <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+            <div class="text-center mb-6">
+              <p class="text-green-200 mb-2">Total Platform Earnings</p>
+              <p class="text-4xl font-bold">₱12,450,000</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold">1,250+</p>
+                <p class="text-sm text-green-200">Active Shareholders</p>
+              </div>
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold">15+</p>
+                <p class="text-sm text-green-200">Partner Businesses</p>
+              </div>
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold">98%</p>
+                <p class="text-sm text-green-200">Satisfaction Rate</p>
+              </div>
+              <div class="bg-white/10 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold">+45%</p>
+                <p class="text-sm text-green-200">Avg. ROI</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, RecaptchaVerifier, signInWithPhoneNumber, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  <!-- Features Section -->
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose ShareVest?</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Our platform offers a transparent, secure, and profitable way to grow your investment through partner businesses.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card-hover bg-gray-50 rounded-2xl p-8 text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Flexible Share Options</h3>
+          <p class="text-gray-600">Choose from 1% to 10% share percentage based on your investment capacity and goals.</p>
+        </div>
+        <div class="card-hover bg-gray-50 rounded-2xl p-8 text-center">
+          <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Lock-in Rewards</h3>
+          <p class="text-gray-600">Earn up to 70% more with longer lock-in periods. Choose from 6 months to 3 years.</p>
+        </div>
+        <div class="card-hover bg-gray-50 rounded-2xl p-8 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Referral Bonus</h3>
+          <p class="text-gray-600">Activate your account for free by recruiting 2-3 new members to the platform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
-            authDomain: "shopline-7a14f.firebaseapp.com",
-            projectId: "shopline-7a14f",
-            storageBucket: "shopline-7a14f.firebasestorage.app",
-            messagingSenderId: "1064176765834",
-            appId: "1:1064176765834:web:f30944d3768599d137d673",
-            measurementId: "G-49Q3CBV09C"
-        };
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Get started in 4 simple steps and begin your investment journey.</p>
+      </div>
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+          <h3 class="font-bold text-gray-800 mb-2">Register</h3>
+          <p class="text-gray-600 text-sm">Create your account with KYC verification</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+          <h3 class="font-bold text-gray-800 mb-2">Choose Shares</h3>
+          <p class="text-gray-600 text-sm">Select your share percentage (1-10%)</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+          <h3 class="font-bold text-gray-800 mb-2">Activate</h3>
+          <p class="text-gray-600 text-sm">Pay activation fee or recruit members</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
+          <h3 class="font-bold text-gray-800 mb-2">Earn</h3>
+          <p class="text-gray-600 text-sm">Receive earnings after maturity</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        let app, auth, db;
+  <!-- Share Options Section -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Share Options</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Choose the share percentage that fits your investment goals.</p>
+      </div>
+      <div class="grid md:grid-cols-5 gap-4">
+        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
+          <p class="text-3xl font-bold text-green-600 mb-2">1%</p>
+          <p class="text-gray-600 text-sm mb-4">Starter</p>
+          <p class="text-xs text-gray-500">₱5,000 activation</p>
+        </div>
+        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
+          <p class="text-3xl font-bold text-green-600 mb-2">3%</p>
+          <p class="text-gray-600 text-sm mb-4">Basic</p>
+          <p class="text-xs text-gray-500">₱15,000 activation</p>
+        </div>
+        <div class="card-hover bg-green-600 rounded-2xl p-6 text-center border-2 border-green-600 text-white relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-xs px-3 py-1 rounded-full">Popular</div>
+          <p class="text-3xl font-bold mb-2">5%</p>
+          <p class="text-green-100 text-sm mb-4">Standard</p>
+          <p class="text-xs text-green-200">₱25,000 activation</p>
+        </div>
+        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
+          <p class="text-3xl font-bold text-green-600 mb-2">7%</p>
+          <p class="text-gray-600 text-sm mb-4">Premium</p>
+          <p class="text-xs text-gray-500">₱35,000 activation</p>
+        </div>
+        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
+          <p class="text-3xl font-bold text-green-600 mb-2">10%</p>
+          <p class="text-gray-600 text-sm mb-4">Elite</p>
+          <p class="text-xs text-gray-500">₱50,000 activation</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lock-in Period Section -->
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Lock-in Periods & Rewards</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">The longer you commit, the more you earn.</p>
+      </div>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm">
+          <p class="text-2xl font-bold text-gray-800 mb-2">6 Months</p>
+          <p class="text-green-600 text-xl font-bold mb-2">Base Rate</p>
+          <p class="text-gray-600 text-sm">Standard earnings based on share %</p>
+        </div>
+        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm">
+          <p class="text-2xl font-bold text-gray-800 mb-2">1 Year</p>
+          <p class="text-green-600 text-xl font-bold mb-2">+20% Bonus</p>
+          <p class="text-gray-600 text-sm">Extra 20% on your earnings</p>
+        </div>
+        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm border-2 border-green-500">
+          <div class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">Recommended</div>
+          <p class="text-2xl font-bold text-gray-800 mb-2">2 Years</p>
+          <p class="text-green-600 text-xl font-bold mb-2">+40% Bonus</p>
+          <p class="text-gray-600 text-sm">Extra 40% on your earnings</p>
+        </div>
+        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm">
+          <p class="text-2xl font-bold text-gray-800 mb-2">3 Years</p>
+          <p class="text-green-600 text-xl font-bold mb-2">+70% Bonus</p>
+          <p class="text-gray-600 text-sm">Maximum earnings potential</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners Section -->
+  <section id="partners" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Our Partner Businesses</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Your investment supports real businesses across multiple industries.</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="partners-grid">
+        <!-- Partners loaded dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 gradient-bg text-white">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Investment Journey?</h2>
+      <p class="text-green-100 text-lg mb-8">Join thousands of shareholders earning from partner business performance.</p>
+      <button onclick="showRegisterModal()" class="bg-white text-green-700 px-10 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition shadow-lg">
+        Register Now - It's Free
+      </button>
+      <p class="text-green-200 text-sm mt-4">No credit card required. Account activation can be done via referral.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            ShareVest
+          </h3>
+          <p class="text-gray-400 text-sm">Your trusted shareholder-based digital investment platform.</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">Platform</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="#features" class="hover:text-white transition">Features</a></li>
+            <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+            <li><a href="#partners" class="hover:text-white transition">Partners</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">Legal</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="#" class="hover:text-white transition">Terms & Conditions</a></li>
+            <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-white transition">Risk Disclosure</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">Contact</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>support@sharevest.com</li>
+            <li>+63 912 345 6789</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+        <p class="mb-2">DISCLAIMER: This is NOT a guaranteed profit investment. Returns depend on partner business performance.</p>
+        <p>&copy; 2025 ShareVest. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Register Modal -->
+  <div id="register-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
+      <button onclick="hideRegisterModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      <div class="p-8">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800">Create Your Account</h2>
+          <p class="text-gray-600 text-sm mt-2">Join ShareVest and start your investment journey</p>
+        </div>
         
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            console.log('[v0] Firebase initialized successfully');
-        } catch (error) {
-            console.error('[v0] Firebase initialization error:', error);
-            alert('Firebase initialization failed: ' + error.message);
+        <!-- Toggle between Login and Register -->
+        <div class="flex bg-gray-100 rounded-lg p-1 mb-6">
+          <button id="tab-register" onclick="showTab('register')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition bg-white shadow text-gray-800">Register</button>
+          <button id="tab-login" onclick="showTab('login')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition text-gray-600">Login</button>
+        </div>
+
+        <!-- Register Form -->
+        <form id="register-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <input type="text" id="reg-name" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+            <input type="email" id="reg-email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
+            <input type="tel" id="reg-phone" required placeholder="+63" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+            <input type="password" id="reg-password" required minlength="6" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Referral Code (Optional)</label>
+            <input type="text" id="reg-referral" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Enter referrer's code">
+          </div>
+          <div class="flex items-start gap-2">
+            <input type="checkbox" id="reg-terms" required class="mt-1">
+            <label for="reg-terms" class="text-sm text-gray-600">I agree to the <a href="#" class="text-green-600 hover:underline">Terms & Conditions</a> and <a href="#" class="text-green-600 hover:underline">Risk Disclosure</a></label>
+          </div>
+          <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition">
+            Create Account
+          </button>
+        </form>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-4 hidden">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+          <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition">
+            Sign In
+          </button>
+          <p class="text-center text-sm text-gray-600">
+            <a href="#" class="text-green-600 hover:underline">Forgot Password?</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+      authDomain: "shopline-7a14f.firebaseapp.com",
+      projectId: "shopline-7a14f",
+      storageBucket: "shopline-7a14f.firebasestorage.app",
+      messagingSenderId: "1064176765834",
+      appId: "1:1064176765834:web:f30944d3768599d137d673",
+      measurementId: "G-49Q3CBV09C"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Auth State
+    auth.onAuthStateChanged(user => {
+      const authSection = document.getElementById('auth-section');
+      if (user) {
+        authSection.innerHTML = `
+          <div class="flex items-center gap-3">
+            <a href="dashboard.html" class="bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition font-medium">Dashboard</a>
+            <button onclick="signOut()" class="text-green-200 hover:text-white transition">Sign Out</button>
+          </div>
+        `;
+      } else {
+        authSection.innerHTML = `
+          <button onclick="showRegisterModal()" class="bg-white text-green-700 px-6 py-2 rounded-lg font-semibold hover:bg-green-50 transition">Get Started</button>
+        `;
+      }
+    });
+
+    // Modal Functions
+    function showRegisterModal() {
+      document.getElementById('register-modal').classList.remove('hidden');
+      document.getElementById('register-modal').classList.add('flex');
+    }
+
+    function hideRegisterModal() {
+      document.getElementById('register-modal').classList.add('hidden');
+      document.getElementById('register-modal').classList.remove('flex');
+    }
+
+    function showTab(tab) {
+      const registerForm = document.getElementById('register-form');
+      const loginForm = document.getElementById('login-form');
+      const tabRegister = document.getElementById('tab-register');
+      const tabLogin = document.getElementById('tab-login');
+      
+      if (tab === 'register') {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        tabRegister.classList.add('bg-white', 'shadow', 'text-gray-800');
+        tabRegister.classList.remove('text-gray-600');
+        tabLogin.classList.remove('bg-white', 'shadow', 'text-gray-800');
+        tabLogin.classList.add('text-gray-600');
+      } else {
+        registerForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        tabLogin.classList.add('bg-white', 'shadow', 'text-gray-800');
+        tabLogin.classList.remove('text-gray-600');
+        tabRegister.classList.remove('bg-white', 'shadow', 'text-gray-800');
+        tabRegister.classList.add('text-gray-600');
+      }
+    }
+
+    // Close modal on outside click
+    document.getElementById('register-modal').onclick = (e) => {
+      if (e.target.id === 'register-modal') hideRegisterModal();
+    };
+
+    // Generate referral code
+    function generateReferralCode(userId) {
+      return 'SV' + userId.substring(0, 6).toUpperCase();
+    }
+
+    // Register Form
+    document.getElementById('register-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const phone = document.getElementById('reg-phone').value;
+      const password = document.getElementById('reg-password').value;
+      const referralCode = document.getElementById('reg-referral').value;
+
+      try {
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        await user.updateProfile({ displayName: name });
+
+        // Check referral code
+        let referredBy = null;
+        if (referralCode) {
+          const referrerSnapshot = await db.collection('shareholders').where('referralCode', '==', referralCode.toUpperCase()).get();
+          if (!referrerSnapshot.empty) {
+            referredBy = referrerSnapshot.docs[0].id;
+          }
         }
 
-        const emailTab = document.getElementById('emailTab');
-        const phoneTab = document.getElementById('phoneTab');
-        const loginForm = document.getElementById('loginForm');
-        const phoneLoginForm = document.getElementById('phoneLoginForm');
+        // Create shareholder document
+        const shareholderData = {
+          name,
+          email,
+          phone,
+          referralCode: generateReferralCode(user.uid),
+          referredBy,
+          sharePercentage: null,
+          lockInPeriod: null,
+          status: 'inactive',
+          activationMethod: null,
+          activatedAt: null,
+          maturityDate: null,
+          totalEarnings: 0,
+          recruits: [],
+          createdAt: new Date().toISOString(),
+          kycVerified: false
+        };
 
-        emailTab.addEventListener('click', () => {
-            emailTab.classList.add('border-orange-500', 'text-orange-500');
-            emailTab.classList.remove('border-transparent', 'text-gray-500');
-            phoneTab.classList.remove('border-orange-500', 'text-orange-500');
-            phoneTab.classList.add('border-transparent', 'text-gray-500');
-            loginForm.classList.remove('hidden');
-            phoneLoginForm.classList.add('hidden');
-        });
+        await db.collection('shareholders').doc(user.uid).set(shareholderData);
 
-        phoneTab.addEventListener('click', () => {
-            phoneTab.classList.add('border-orange-500', 'text-orange-500');
-            phoneTab.classList.remove('border-transparent', 'text-gray-500');
-            emailTab.classList.remove('border-orange-500', 'text-orange-500');
-            emailTab.classList.add('border-transparent', 'text-gray-500');
-            phoneLoginForm.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-        });
+        // Update referrer's recruits
+        if (referredBy) {
+          await db.collection('shareholders').doc(referredBy).update({
+            recruits: firebase.firestore.FieldValue.arrayUnion(user.uid)
+          });
+        }
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+        hideRegisterModal();
+        alert('Account created successfully! Please complete your profile to start investing.');
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    };
 
-            if (!auth || !db) {
-                alert('Firebase is not properly initialized. Please configure your Firebase credentials.');
-                return;
-            }
+    // Login Form
+    document.getElementById('login-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
 
-            try {
-                console.log('[v0] Attempting login...');
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('[v0] User logged in:', userCredential.user.uid);
-                
-                // Check if user profile exists, create if not
-                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-                if (!userDoc.exists()) {
-                    console.log('[v0] Creating new user profile...');
-                    const newUserReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-                    await setDoc(doc(db, 'users', userCredential.user.uid), {
-                        username: userCredential.user.displayName || 'User',
-                        email: userCredential.user.email,
-                        role: 'buyer',
-                        referralCode: newUserReferralCode,
-                        referredBy: null,
-                        totalCommissionEarned: 0,
-                        referralCount: 0,
-                        createdAt: new Date().toISOString()
-                    });
-                }
-                
-                console.log('[v0] Redirecting to dashboard...');
-                window.location.href = 'seller-dashboard.html';
-            } catch (error) {
-                console.error('[v0] Login error:', error);
-                let errorMessage = 'Login failed: ';
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessage += 'No user found with this email.';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage += 'Incorrect password.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage += 'Invalid email address.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessage += 'Network error. Please check your internet connection.';
-                        break;
-                    case 'unavailable':
-                        errorMessage += 'Unable to connect to database. Please ensure Firestore is enabled in your Firebase Console.';
-                        break;
-                    case 'permission-denied':
-                        errorMessage += 'Database access denied. Please check your Firestore security rules.';
-                        break;
-                    default:
-                        errorMessage += error.message;
-                }
-                alert(errorMessage);
-            }
-        });
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        hideRegisterModal();
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    };
 
-        let confirmationResult;
-        
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sendOtpBtn', {
-            'size': 'invisible',
-            'callback': (response) => {
-                console.log('[v0] reCAPTCHA solved');
-            }
-        });
+    function signOut() {
+      auth.signOut();
+    }
 
-        document.getElementById('sendOtpBtn').addEventListener('click', async () => {
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            if (!phoneNumber) {
-                alert('Please enter phone number');
-                return;
-            }
+    // Load Partners
+    async function loadPartners() {
+      const grid = document.getElementById('partners-grid');
+      const defaultPartners = [
+        { name: 'Tech Ventures', industry: 'Technology', logo: '💻' },
+        { name: 'Green Farms', industry: 'Agriculture', logo: '🌾' },
+        { name: 'Urban Retail', industry: 'Retail', logo: '🏪' },
+        { name: 'FinServe Corp', industry: 'Finance', logo: '🏦' },
+        { name: 'FoodHub PH', industry: 'F&B', logo: '🍽️' },
+        { name: 'LogiTrans', industry: 'Logistics', logo: '🚚' },
+        { name: 'EduTech Plus', industry: 'Education', logo: '📚' },
+        { name: 'HealthFirst', industry: 'Healthcare', logo: '🏥' }
+      ];
 
-            try {
-                const appVerifier = window.recaptchaVerifier;
-                confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-                console.log('[v0] OTP sent to phone');
-                document.getElementById('otpSection').classList.remove('hidden');
-                alert('OTP sent to your phone number!');
-            } catch (error) {
-                console.error('[v0] OTP send error:', error);
-                alert('Failed to send OTP: ' + error.message);
-            }
-        });
+      grid.innerHTML = defaultPartners.map(p => `
+        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center">
+          <div class="text-4xl mb-3">${p.logo}</div>
+          <h3 class="font-bold text-gray-800">${p.name}</h3>
+          <p class="text-sm text-gray-600">${p.industry}</p>
+        </div>
+      `).join('');
+    }
 
-        document.getElementById('phoneLoginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const code = document.getElementById('otpCode').value;
-
-            try {
-                const result = await confirmationResult.confirm(code);
-                console.log('[v0] Phone login successful:', result.user.uid);
-                
-                const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-                if (!userDoc.exists()) {
-                    const newUserReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-                    await setDoc(doc(db, 'users', result.user.uid), {
-                        username: result.user.phoneNumber,
-                        email: result.user.email || '',
-                        role: 'buyer',
-                        referralCode: newUserReferralCode,
-                        referredBy: null,
-                        totalCommissionEarned: 0,
-                        referralCount: 0,
-                        createdAt: new Date().toISOString()
-                    });
-                }
-                
-                window.location.href = 'seller-dashboard.html';
-            } catch (error) {
-                console.error('[v0] OTP verify error:', error);
-                alert('Invalid OTP: ' + error.message);
-            }
-        });
-
-        document.getElementById('googleLoginBtn').addEventListener('click', async () => {
-            if (!auth) {
-                alert('Firebase is not properly initialized. Please configure your Firebase credentials.');
-                return;
-            }
-            
-            const provider = new GoogleAuthProvider();
-            try {
-                console.log('[v0] Attempting Google login...');
-                const result = await signInWithPopup(auth, provider);
-                console.log('[v0] Google login successful:', result.user.uid);
-                
-                const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-                if (!userDoc.exists()) {
-                    const newUserReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-                    await setDoc(doc(db, 'users', result.user.uid), {
-                        username: result.user.displayName || 'User',
-                        email: result.user.email,
-                        role: 'buyer',
-                        referralCode: newUserReferralCode,
-                        referredBy: null,
-                        totalCommissionEarned: 0,
-                        referralCount: 0,
-                        createdAt: new Date().toISOString()
-                    });
-                }
-                
-                window.location.href = 'seller-dashboard.html';
-            } catch (error) {
-                console.error('[v0] Google login error:', error);
-                alert('Google login failed: ' + error.message);
-            }
-        });
-
-        document.getElementById('facebookLoginBtn').addEventListener('click', async () => {
-            if (!auth) {
-                alert('Firebase is not properly initialized. Please configure your Firebase credentials.');
-                return;
-            }
-            
-            const provider = new FacebookAuthProvider();
-            try {
-                console.log('[v0] Attempting Facebook login...');
-                const result = await signInWithPopup(auth, provider);
-                console.log('[v0] Facebook login successful:', result.user.uid);
-                
-                const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-                if (!userDoc.exists()) {
-                    const newUserReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-                    await setDoc(doc(db, 'users', result.user.uid), {
-                        username: result.user.displayName || 'User',
-                        email: result.user.email,
-                        role: 'buyer',
-                        referralCode: newUserReferralCode,
-                        referredBy: null,
-                        totalCommissionEarned: 0,
-                        referralCount: 0,
-                        createdAt: new Date().toISOString()
-                    });
-                }
-                
-                window.location.href = 'seller-dashboard.html';
-            } catch (error) {
-                console.error('[v0] Facebook login error:', error);
-                alert('Facebook login failed: ' + error.message);
-            }
-        });
-    </script>
+    loadPartners();
+  </script>
 </body>
 </html>
