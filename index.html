@@ -3,386 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShareVest - Digital Investment Platform</title>
+  <title>ShopLine - Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' },
-            accent: { 500: '#f59e0b', 600: '#d97706' }
-          }
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .gradient-bg { background: linear-gradient(135deg, #15803d 0%, #22c55e 50%, #16a34a 100%); }
-    .card-hover { transition: all 0.3s ease; }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    .gradient-btn { background: linear-gradient(to right, #f97316, #ef4444); }
+    .gradient-btn:hover { background: linear-gradient(to right, #ea580c, #dc2626); }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
   <!-- Header -->
-  <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-4">
+  <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between">
-        <a href="index.html" class="text-2xl font-bold flex items-center gap-2">
-          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          ShareVest
-        </a>
-        <nav class="hidden md:flex items-center space-x-6">
-          <a href="#features" class="hover:text-green-200 transition">Features</a>
-          <a href="#how-it-works" class="hover:text-green-200 transition">How It Works</a>
-          <a href="#partners" class="hover:text-green-200 transition">Partners</a>
+        <a href="index.html" class="text-2xl font-bold">ShopLine</a>
+        <nav class="flex items-center space-x-6">
+          <a href="marketplace.html" class="hover:text-orange-200 flex items-center gap-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            Marketplace
+          </a>
+          <a href="cart.html" class="hover:text-orange-200 flex items-center gap-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Cart <span id="cart-count" class="bg-yellow-400 text-orange-800 text-xs px-2 py-0.5 rounded-full ml-1">0</span>
+          </a>
+          <a href="seller.html" class="hover:text-orange-200">Seller Center</a>
           <div id="auth-section"></div>
         </nav>
-        <button id="mobile-menu-btn" class="md:hidden text-white">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="gradient-bg text-white py-20 md:py-32">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="grid md:grid-cols-2 gap-12 items-center">
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-orange-400 to-red-400 rounded-2xl p-8 mb-8 text-white">
+      <h1 class="text-4xl font-bold mb-4">Welcome to ShopLine</h1>
+      <p class="text-xl mb-6">Discover amazing products from trusted sellers</p>
+      <a href="marketplace.html" class="inline-block bg-white text-orange-500 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition">
+        Browse Marketplace
+      </a>
+    </div>
+
+    <!-- Categories -->
+    <div class="mb-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Categories</h2>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-4" id="categories-grid">
+        <a href="marketplace.html?category=Electronics" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">📱</div>
+          <p class="text-sm font-medium">Electronics</p>
+        </a>
+        <a href="marketplace.html?category=Fashion" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">👕</div>
+          <p class="text-sm font-medium">Fashion</p>
+        </a>
+        <a href="marketplace.html?category=Home" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">🏠</div>
+          <p class="text-sm font-medium">Home</p>
+        </a>
+        <a href="marketplace.html?category=Beauty" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">💄</div>
+          <p class="text-sm font-medium">Beauty</p>
+        </a>
+        <a href="marketplace.html?category=Sports" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">⚽</div>
+          <p class="text-sm font-medium">Sports</p>
+        </a>
+        <a href="marketplace.html?category=Food" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">🍔</div>
+          <p class="text-sm font-medium">Food</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Featured Products -->
+    <div>
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Featured Products</h2>
+      <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- Products will be loaded here -->
+        <div class="col-span-full text-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-md mx-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome to ShopLine</h2>
+      <form id="login-form" class="space-y-4">
         <div>
-          <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-            Invest Smart,<br>Grow Together
-          </h1>
-          <p class="text-lg md:text-xl text-green-100 mb-8">
-            Join our shareholder-based digital platform. Choose your share percentage, select your lock-in period, and earn from partner business performance.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4">
-            <button onclick="showRegisterModal()" class="bg-white text-green-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition shadow-lg">
-              Start Investing
-            </button>
-            <a href="#how-it-works" class="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition text-center">
-              Learn More
-            </a>
-          </div>
-          <div class="mt-8 flex items-center gap-6 text-sm">
-            <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Transparent</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Secure</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Long-term</span>
-            </div>
-          </div>
-        </div>
-        <div class="hidden md:block">
-          <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-            <div class="text-center mb-6">
-              <p class="text-green-200 mb-2">Total Platform Earnings</p>
-              <p class="text-4xl font-bold">₱12,450,000</p>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-white/10 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold">1,250+</p>
-                <p class="text-sm text-green-200">Active Shareholders</p>
-              </div>
-              <div class="bg-white/10 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold">15+</p>
-                <p class="text-sm text-green-200">Partner Businesses</p>
-              </div>
-              <div class="bg-white/10 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold">98%</p>
-                <p class="text-sm text-green-200">Satisfaction Rate</p>
-              </div>
-              <div class="bg-white/10 rounded-xl p-4 text-center">
-                <p class="text-2xl font-bold">+45%</p>
-                <p class="text-sm text-green-200">Avg. ROI</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-  <section id="features" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose ShareVest?</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">Our platform offers a transparent, secure, and profitable way to grow your investment through partner businesses.</p>
-      </div>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="card-hover bg-gray-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3">Flexible Share Options</h3>
-          <p class="text-gray-600">Choose from 1% to 10% share percentage based on your investment capacity and goals.</p>
-        </div>
-        <div class="card-hover bg-gray-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3">Lock-in Rewards</h3>
-          <p class="text-gray-600">Earn up to 70% more with longer lock-in periods. Choose from 6 months to 3 years.</p>
-        </div>
-        <div class="card-hover bg-gray-50 rounded-2xl p-8 text-center">
-          <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3">Referral Bonus</h3>
-          <p class="text-gray-600">Activate your account for free by recruiting 2-3 new members to the platform.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works Section -->
-  <section id="how-it-works" class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">Get started in 4 simple steps and begin your investment journey.</p>
-      </div>
-      <div class="grid md:grid-cols-4 gap-8">
-        <div class="text-center">
-          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-          <h3 class="font-bold text-gray-800 mb-2">Register</h3>
-          <p class="text-gray-600 text-sm">Create your account with KYC verification</p>
-        </div>
-        <div class="text-center">
-          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-          <h3 class="font-bold text-gray-800 mb-2">Choose Shares</h3>
-          <p class="text-gray-600 text-sm">Select your share percentage (1-10%)</p>
-        </div>
-        <div class="text-center">
-          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-          <h3 class="font-bold text-gray-800 mb-2">Activate</h3>
-          <p class="text-gray-600 text-sm">Pay activation fee or recruit members</p>
-        </div>
-        <div class="text-center">
-          <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
-          <h3 class="font-bold text-gray-800 mb-2">Earn</h3>
-          <p class="text-gray-600 text-sm">Receive earnings after maturity</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Share Options Section -->
-  <section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Share Options</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">Choose the share percentage that fits your investment goals.</p>
-      </div>
-      <div class="grid md:grid-cols-5 gap-4">
-        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
-          <p class="text-3xl font-bold text-green-600 mb-2">1%</p>
-          <p class="text-gray-600 text-sm mb-4">Starter</p>
-          <p class="text-xs text-gray-500">₱5,000 activation</p>
-        </div>
-        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
-          <p class="text-3xl font-bold text-green-600 mb-2">3%</p>
-          <p class="text-gray-600 text-sm mb-4">Basic</p>
-          <p class="text-xs text-gray-500">₱15,000 activation</p>
-        </div>
-        <div class="card-hover bg-green-600 rounded-2xl p-6 text-center border-2 border-green-600 text-white relative">
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-xs px-3 py-1 rounded-full">Popular</div>
-          <p class="text-3xl font-bold mb-2">5%</p>
-          <p class="text-green-100 text-sm mb-4">Standard</p>
-          <p class="text-xs text-green-200">₱25,000 activation</p>
-        </div>
-        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
-          <p class="text-3xl font-bold text-green-600 mb-2">7%</p>
-          <p class="text-gray-600 text-sm mb-4">Premium</p>
-          <p class="text-xs text-gray-500">₱35,000 activation</p>
-        </div>
-        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center border-2 border-transparent hover:border-green-500">
-          <p class="text-3xl font-bold text-green-600 mb-2">10%</p>
-          <p class="text-gray-600 text-sm mb-4">Elite</p>
-          <p class="text-xs text-gray-500">₱50,000 activation</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Lock-in Period Section -->
-  <section class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Lock-in Periods & Rewards</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">The longer you commit, the more you earn.</p>
-      </div>
-      <div class="grid md:grid-cols-4 gap-6">
-        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm">
-          <p class="text-2xl font-bold text-gray-800 mb-2">6 Months</p>
-          <p class="text-green-600 text-xl font-bold mb-2">Base Rate</p>
-          <p class="text-gray-600 text-sm">Standard earnings based on share %</p>
-        </div>
-        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm">
-          <p class="text-2xl font-bold text-gray-800 mb-2">1 Year</p>
-          <p class="text-green-600 text-xl font-bold mb-2">+20% Bonus</p>
-          <p class="text-gray-600 text-sm">Extra 20% on your earnings</p>
-        </div>
-        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm border-2 border-green-500">
-          <div class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">Recommended</div>
-          <p class="text-2xl font-bold text-gray-800 mb-2">2 Years</p>
-          <p class="text-green-600 text-xl font-bold mb-2">+40% Bonus</p>
-          <p class="text-gray-600 text-sm">Extra 40% on your earnings</p>
-        </div>
-        <div class="card-hover bg-white rounded-2xl p-6 text-center shadow-sm">
-          <p class="text-2xl font-bold text-gray-800 mb-2">3 Years</p>
-          <p class="text-green-600 text-xl font-bold mb-2">+70% Bonus</p>
-          <p class="text-gray-600 text-sm">Maximum earnings potential</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Partners Section -->
-  <section id="partners" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Our Partner Businesses</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">Your investment supports real businesses across multiple industries.</p>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="partners-grid">
-        <!-- Partners loaded dynamically -->
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="py-20 gradient-bg text-white">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Investment Journey?</h2>
-      <p class="text-green-100 text-lg mb-8">Join thousands of shareholders earning from partner business performance.</p>
-      <button onclick="showRegisterModal()" class="bg-white text-green-700 px-10 py-4 rounded-xl font-bold text-lg hover:bg-green-50 transition shadow-lg">
-        Register Now - It's Free
-      </button>
-      <p class="text-green-200 text-sm mt-4">No credit card required. Account activation can be done via referral.</p>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8 mb-8">
-        <div>
-          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            ShareVest
-          </h3>
-          <p class="text-gray-400 text-sm">Your trusted shareholder-based digital investment platform.</p>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input type="email" id="login-email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
         </div>
         <div>
-          <h4 class="font-bold mb-4">Platform</h4>
-          <ul class="space-y-2 text-gray-400 text-sm">
-            <li><a href="#features" class="hover:text-white transition">Features</a></li>
-            <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
-            <li><a href="#partners" class="hover:text-white transition">Partners</a></li>
-          </ul>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+        </div>
+        <button type="submit" class="w-full gradient-btn text-white py-3 rounded-lg font-semibold">Sign In</button>
+      </form>
+      <div class="text-center mt-4">
+        <button id="show-register" class="text-orange-500 hover:underline">Don't have an account? Sign Up</button>
+      </div>
+      <form id="register-form" class="space-y-4 hidden">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <input type="text" id="register-name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
         </div>
         <div>
-          <h4 class="font-bold mb-4">Legal</h4>
-          <ul class="space-y-2 text-gray-400 text-sm">
-            <li><a href="#" class="hover:text-white transition">Terms & Conditions</a></li>
-            <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-white transition">Risk Disclosure</a></li>
-          </ul>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input type="email" id="register-email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
         </div>
         <div>
-          <h4 class="font-bold mb-4">Contact</h4>
-          <ul class="space-y-2 text-gray-400 text-sm">
-            <li>support@sharevest.com</li>
-            <li>+63 912 345 6789</li>
-          </ul>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input type="password" id="register-password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
         </div>
-      </div>
-      <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
-        <p class="mb-2">DISCLAIMER: This is NOT a guaranteed profit investment. Returns depend on partner business performance.</p>
-        <p>&copy; 2025 ShareVest. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Register Modal -->
-  <div id="register-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
-      <button onclick="hideRegisterModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-      <div class="p-8">
-        <div class="text-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-800">Create Your Account</h2>
-          <p class="text-gray-600 text-sm mt-2">Join ShareVest and start your investment journey</p>
-        </div>
-        
-        <!-- Toggle between Login and Register -->
-        <div class="flex bg-gray-100 rounded-lg p-1 mb-6">
-          <button id="tab-register" onclick="showTab('register')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition bg-white shadow text-gray-800">Register</button>
-          <button id="tab-login" onclick="showTab('login')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition text-gray-600">Login</button>
-        </div>
-
-        <!-- Register Form -->
-        <form id="register-form" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-            <input type="text" id="reg-name" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
-            <input type="email" id="reg-email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
-            <input type="tel" id="reg-phone" required placeholder="+63" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-            <input type="password" id="reg-password" required minlength="6" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Referral Code (Optional)</label>
-            <input type="text" id="reg-referral" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Enter referrer's code">
-          </div>
-          <div class="flex items-start gap-2">
-            <input type="checkbox" id="reg-terms" required class="mt-1">
-            <label for="reg-terms" class="text-sm text-gray-600">I agree to the <a href="#" class="text-green-600 hover:underline">Terms & Conditions</a> and <a href="#" class="text-green-600 hover:underline">Risk Disclosure</a></label>
-          </div>
-          <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition">
-            Create Account
-          </button>
-        </form>
-
-        <!-- Login Form -->
-        <form id="login-form" class="space-y-4 hidden">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-            <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-          <button type="submit" class="w-full gradient-bg text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition">
-            Sign In
-          </button>
-          <p class="text-center text-sm text-gray-600">
-            <a href="#" class="text-green-600 hover:underline">Forgot Password?</a>
-          </p>
-        </form>
-      </div>
+        <button type="submit" class="w-full gradient-btn text-white py-3 rounded-lg font-semibold">Sign Up</button>
+      </form>
+      <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
     </div>
   </div>
 
@@ -408,129 +152,110 @@
       if (user) {
         authSection.innerHTML = `
           <div class="flex items-center gap-3">
-            <a href="dashboard.html" class="bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition font-medium">Dashboard</a>
-            <button onclick="signOut()" class="text-green-200 hover:text-white transition">Sign Out</button>
+            <span class="text-sm">${user.displayName || user.email}</span>
+            <button onclick="signOut()" class="bg-white/20 px-3 py-1 rounded hover:bg-white/30">Sign Out</button>
           </div>
         `;
       } else {
-        authSection.innerHTML = `
-          <button onclick="showRegisterModal()" class="bg-white text-green-700 px-6 py-2 rounded-lg font-semibold hover:bg-green-50 transition">Get Started</button>
-        `;
+        authSection.innerHTML = `<button onclick="showLoginModal()" class="bg-white text-orange-500 px-4 py-2 rounded-lg font-semibold hover:bg-orange-50">Sign In</button>`;
       }
+      updateCartCount();
     });
 
-    // Modal Functions
-    function showRegisterModal() {
-      document.getElementById('register-modal').classList.remove('hidden');
-      document.getElementById('register-modal').classList.add('flex');
-    }
-
-    function hideRegisterModal() {
-      document.getElementById('register-modal').classList.add('hidden');
-      document.getElementById('register-modal').classList.remove('flex');
-    }
-
-    function showTab(tab) {
-      const registerForm = document.getElementById('register-form');
-      const loginForm = document.getElementById('login-form');
-      const tabRegister = document.getElementById('tab-register');
-      const tabLogin = document.getElementById('tab-login');
-      
-      if (tab === 'register') {
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-        tabRegister.classList.add('bg-white', 'shadow', 'text-gray-800');
-        tabRegister.classList.remove('text-gray-600');
-        tabLogin.classList.remove('bg-white', 'shadow', 'text-gray-800');
-        tabLogin.classList.add('text-gray-600');
-      } else {
-        registerForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-        tabLogin.classList.add('bg-white', 'shadow', 'text-gray-800');
-        tabLogin.classList.remove('text-gray-600');
-        tabRegister.classList.remove('bg-white', 'shadow', 'text-gray-800');
-        tabRegister.classList.add('text-gray-600');
+    // Load Products
+    async function loadProducts() {
+      const grid = document.getElementById('products-grid');
+      try {
+        const snapshot = await db.collection('products').orderBy('createdAt', 'desc').limit(12).get();
+        if (snapshot.empty) {
+          grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">No products yet. Be the first to sell!</div>';
+          return;
+        }
+        grid.innerHTML = '';
+        snapshot.forEach(doc => {
+          const product = { id: doc.id, ...doc.data() };
+          grid.innerHTML += createProductCard(product);
+        });
+      } catch (error) {
+        console.error('Error loading products:', error);
+        grid.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error loading products</div>';
       }
     }
 
-    // Close modal on outside click
-    document.getElementById('register-modal').onclick = (e) => {
-      if (e.target.id === 'register-modal') hideRegisterModal();
-    };
-
-    // Generate referral code
-    function generateReferralCode(userId) {
-      return 'SV' + userId.substring(0, 6).toUpperCase();
+    function createProductCard(product) {
+      return `
+        <a href="product.html?id=${product.id}" class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition group">
+          <div class="relative">
+            <img src="${product.image || 'https://placehold.co/200x200?text=Product'}" alt="${product.name}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform">
+            ${product.discount ? `<div class="absolute top-2 right-2 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">-${product.discount}%</div>` : ''}
+            ${product.category ? `<div class="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">${product.category}</div>` : ''}
+          </div>
+          <div class="p-3">
+            <h3 class="text-sm text-gray-800 mb-2 line-clamp-2 group-hover:text-orange-500 transition-colors">${product.name}</h3>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-orange-500 font-bold">₱${product.price?.toLocaleString() || 0}</span>
+              ${product.originalPrice && product.originalPrice !== product.price ? `<span class="text-xs text-gray-400 line-through">₱${product.originalPrice.toLocaleString()}</span>` : ''}
+            </div>
+            <div class="flex items-center justify-between text-xs text-gray-600">
+              <span>⭐ ${product.rating || 4.5}</span>
+              <span>${product.sold || 0} sold</span>
+            </div>
+          </div>
+        </a>
+      `;
     }
 
-    // Register Form
-    document.getElementById('register-form').onsubmit = async (e) => {
+    // Auth Functions
+    function showLoginModal() {
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('login-modal').classList.add('flex');
+    }
+
+    function hideLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('login-modal').classList.remove('flex');
+    }
+
+    document.getElementById('close-modal').onclick = hideLoginModal;
+    document.getElementById('login-modal').onclick = (e) => {
+      if (e.target.id === 'login-modal') hideLoginModal();
+    };
+
+    document.getElementById('show-register').onclick = () => {
+      document.getElementById('login-form').classList.toggle('hidden');
+      document.getElementById('register-form').classList.toggle('hidden');
+      document.getElementById('show-register').textContent = 
+        document.getElementById('login-form').classList.contains('hidden') 
+          ? 'Already have an account? Sign In' 
+          : "Don't have an account? Sign Up";
+    };
+
+    document.getElementById('login-form').onsubmit = async (e) => {
       e.preventDefault();
-      const name = document.getElementById('reg-name').value;
-      const email = document.getElementById('reg-email').value;
-      const phone = document.getElementById('reg-phone').value;
-      const password = document.getElementById('reg-password').value;
-      const referralCode = document.getElementById('reg-referral').value;
-
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
       try {
-        const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        await user.updateProfile({ displayName: name });
-
-        // Check referral code
-        let referredBy = null;
-        if (referralCode) {
-          const referrerSnapshot = await db.collection('shareholders').where('referralCode', '==', referralCode.toUpperCase()).get();
-          if (!referrerSnapshot.empty) {
-            referredBy = referrerSnapshot.docs[0].id;
-          }
-        }
-
-        // Create shareholder document
-        const shareholderData = {
-          name,
-          email,
-          phone,
-          referralCode: generateReferralCode(user.uid),
-          referredBy,
-          sharePercentage: null,
-          lockInPeriod: null,
-          status: 'inactive',
-          activationMethod: null,
-          activatedAt: null,
-          maturityDate: null,
-          totalEarnings: 0,
-          recruits: [],
-          createdAt: new Date().toISOString(),
-          kycVerified: false
-        };
-
-        await db.collection('shareholders').doc(user.uid).set(shareholderData);
-
-        // Update referrer's recruits
-        if (referredBy) {
-          await db.collection('shareholders').doc(referredBy).update({
-            recruits: firebase.firestore.FieldValue.arrayUnion(user.uid)
-          });
-        }
-
-        hideRegisterModal();
-        alert('Account created successfully! Please complete your profile to start investing.');
-        window.location.href = 'dashboard.html';
+        await auth.signInWithEmailAndPassword(email, password);
+        hideLoginModal();
+        alert('Signed in successfully!');
       } catch (error) {
         alert('Error: ' + error.message);
       }
     };
 
-    // Login Form
-    document.getElementById('login-form').onsubmit = async (e) => {
+    document.getElementById('register-form').onsubmit = async (e) => {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
       try {
-        await auth.signInWithEmailAndPassword(email, password);
-        hideRegisterModal();
-        window.location.href = 'dashboard.html';
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        await user.updateProfile({ displayName: name });
+        await db.collection('users').doc(user.uid).set({
+          name, email, createdAt: new Date().toISOString(), followers: [], following: []
+        });
+        hideLoginModal();
+        alert('Account created successfully!');
       } catch (error) {
         alert('Error: ' + error.message);
       }
@@ -538,32 +263,17 @@
 
     function signOut() {
       auth.signOut();
+      alert('Signed out successfully!');
     }
 
-    // Load Partners
-    async function loadPartners() {
-      const grid = document.getElementById('partners-grid');
-      const defaultPartners = [
-        { name: 'Tech Ventures', industry: 'Technology', logo: '💻' },
-        { name: 'Green Farms', industry: 'Agriculture', logo: '🌾' },
-        { name: 'Urban Retail', industry: 'Retail', logo: '🏪' },
-        { name: 'FinServe Corp', industry: 'Finance', logo: '🏦' },
-        { name: 'FoodHub PH', industry: 'F&B', logo: '🍽️' },
-        { name: 'LogiTrans', industry: 'Logistics', logo: '🚚' },
-        { name: 'EduTech Plus', industry: 'Education', logo: '📚' },
-        { name: 'HealthFirst', industry: 'Healthcare', logo: '🏥' }
-      ];
-
-      grid.innerHTML = defaultPartners.map(p => `
-        <div class="card-hover bg-gray-50 rounded-2xl p-6 text-center">
-          <div class="text-4xl mb-3">${p.logo}</div>
-          <h3 class="font-bold text-gray-800">${p.name}</h3>
-          <p class="text-sm text-gray-600">${p.industry}</p>
-        </div>
-      `).join('');
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = count;
     }
 
-    loadPartners();
+    // Initialize
+    loadProducts();
   </script>
 </body>
 </html>
