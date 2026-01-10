@@ -3,149 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - ShareVest</title>
+  <title>ShopLine - Marketplace</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .gradient-bg { background: linear-gradient(135deg, #15803d 0%, #22c55e 50%, #16a34a 100%); }
+    .gradient-btn { background: linear-gradient(to right, #f97316, #ef4444); }
+    .gradient-btn:hover { background: linear-gradient(to right, #ea580c, #dc2626); }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-50 min-h-screen">
   <!-- Header -->
-  <header class="bg-gray-900 text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-4">
+  <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <a href="index.html" class="text-2xl font-bold flex items-center gap-2">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            ShareVest
+        <a href="index.html" class="text-2xl font-bold">ShopLine</a>
+        <nav class="flex items-center space-x-6">
+          <a href="marketplace.html" class="hover:text-orange-200 flex items-center gap-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            Marketplace
           </a>
-          <span class="bg-red-500 text-xs px-2 py-1 rounded">ADMIN</span>
-        </div>
-        <button onclick="signOut()" class="text-gray-400 hover:text-white transition">Sign Out</button>
+          <a href="cart.html" class="hover:text-orange-200 flex items-center gap-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Cart <span id="cart-count" class="bg-yellow-400 text-orange-800 text-xs px-2 py-0.5 rounded-full ml-1">0</span>
+          </a>
+          <a href="seller.html" class="hover:text-orange-200">Seller Center</a>
+          <div id="auth-section"></div>
+        </nav>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-8">
-    <!-- Stats Overview -->
-    <div class="grid md:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-gray-500 text-sm">Total Shareholders</span>
-          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          </div>
-        </div>
-        <p class="text-3xl font-bold text-gray-800" id="total-shareholders">0</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-gray-500 text-sm">Active Members</span>
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-        </div>
-        <p class="text-3xl font-bold text-gray-800" id="active-members">0</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-gray-500 text-sm">Total Capital</span>
-          <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-        </div>
-        <p class="text-3xl font-bold text-gray-800" id="total-capital">₱0</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-gray-500 text-sm">Pending Withdrawals</span>
-          <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-        </div>
-        <p class="text-3xl font-bold text-gray-800" id="pending-withdrawals">0</p>
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-orange-400 to-red-400 rounded-2xl p-8 mb-8 text-white">
+      <h1 class="text-4xl font-bold mb-4">Welcome to ShopLine</h1>
+      <p class="text-xl mb-6">Discover amazing products from trusted sellers</p>
+      <a href="marketplace.html" class="inline-block bg-white text-orange-500 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition">
+        Browse Marketplace
+      </a>
+    </div>
+
+    <!-- Categories -->
+    <div class="mb-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Categories</h2>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-4" id="categories-grid">
+        <a href="marketplace.html?category=Electronics" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">📱</div>
+          <p class="text-sm font-medium">Electronics</p>
+        </a>
+        <a href="marketplace.html?category=Fashion" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">👕</div>
+          <p class="text-sm font-medium">Fashion</p>
+        </a>
+        <a href="marketplace.html?category=Home" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">🏠</div>
+          <p class="text-sm font-medium">Home</p>
+        </a>
+        <a href="marketplace.html?category=Beauty" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">💄</div>
+          <p class="text-sm font-medium">Beauty</p>
+        </a>
+        <a href="marketplace.html?category=Sports" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">⚽</div>
+          <p class="text-sm font-medium">Sports</p>
+        </a>
+        <a href="marketplace.html?category=Food" class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition text-center">
+          <div class="text-3xl mb-2">🍔</div>
+          <p class="text-sm font-medium">Food</p>
+        </a>
       </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="bg-white rounded-2xl overflow-hidden">
-      <div class="flex border-b">
-        <button onclick="showTab('shareholders')" class="tab-btn flex-1 py-4 font-medium text-green-600 border-b-2 border-green-600" data-tab="shareholders">Shareholders</button>
-        <button onclick="showTab('kyc')" class="tab-btn flex-1 py-4 font-medium text-gray-500 hover:text-gray-700" data-tab="kyc">KYC Pending</button>
-        <button onclick="showTab('withdrawals')" class="tab-btn flex-1 py-4 font-medium text-gray-500 hover:text-gray-700" data-tab="withdrawals">Withdrawals</button>
-        <button onclick="showTab('earnings')" class="tab-btn flex-1 py-4 font-medium text-gray-500 hover:text-gray-700" data-tab="earnings">Distribute Earnings</button>
-      </div>
-
-      <!-- Shareholders Tab -->
-      <div id="shareholders-tab" class="tab-content p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold text-gray-800">All Shareholders</h2>
-          <input type="search" placeholder="Search..." class="px-4 py-2 border rounded-lg" id="search-shareholders">
+    <!-- Featured Products -->
+    <div>
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Featured Products</h2>
+      <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- Products will be loaded here -->
+        <div class="col-span-full text-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mx-auto"></div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="text-left text-gray-500 text-sm border-b">
-                <th class="pb-3">Name</th>
-                <th class="pb-3">Email</th>
-                <th class="pb-3">Share %</th>
-                <th class="pb-3">Lock-in</th>
-                <th class="pb-3">Status</th>
-                <th class="pb-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="shareholders-table">
-              <!-- Data loaded dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- KYC Tab -->
-      <div id="kyc-tab" class="tab-content p-6 hidden">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Pending KYC Verification</h2>
-        <div id="kyc-list" class="space-y-4">
-          <p class="text-gray-500 text-center py-8">No pending KYC submissions</p>
-        </div>
-      </div>
-
-      <!-- Withdrawals Tab -->
-      <div id="withdrawals-tab" class="tab-content p-6 hidden">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Pending Withdrawals</h2>
-        <div id="withdrawals-list" class="space-y-4">
-          <p class="text-gray-500 text-center py-8">No pending withdrawals</p>
-        </div>
-      </div>
-
-      <!-- Distribute Earnings Tab -->
-      <div id="earnings-tab" class="tab-content p-6 hidden">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Distribute Monthly Earnings</h2>
-        <form id="earnings-form" class="max-w-lg space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Total Profit to Distribute</label>
-            <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">₱</span>
-              <input type="number" id="profit-amount" required class="w-full pl-8 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <input type="text" id="earning-description" value="Monthly Earnings" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
-          </div>
-          <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition">
-            Distribute to All Active Members
-          </button>
-        </form>
       </div>
     </div>
   </main>
 
+  <!-- Login Modal -->
+  <div id="login-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-md mx-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome to ShopLine</h2>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input type="email" id="login-email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+        </div>
+        <button type="submit" class="w-full gradient-btn text-white py-3 rounded-lg font-semibold">Sign In</button>
+      </form>
+      <div class="text-center mt-4">
+        <button id="show-register" class="text-orange-500 hover:underline">Don't have an account? Sign Up</button>
+      </div>
+      <form id="register-form" class="space-y-4 hidden">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <input type="text" id="register-name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input type="email" id="register-email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input type="password" id="register-password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+        </div>
+        <button type="submit" class="w-full gradient-btn text-white py-3 rounded-lg font-semibold">Sign Up</button>
+      </form>
+      <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    </div>
+  </div>
+
   <script>
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
       authDomain: "shopline-7a14f.firebaseapp.com",
@@ -160,278 +146,134 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let shareholders = [];
-
-    auth.onAuthStateChanged(async user => {
+    // Auth State
+    auth.onAuthStateChanged(user => {
+      const authSection = document.getElementById('auth-section');
       if (user) {
-        // Check if admin (you would implement proper admin check)
-        await loadAdminData();
+        authSection.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-sm">${user.displayName || user.email}</span>
+            <button onclick="signOut()" class="bg-white/20 px-3 py-1 rounded hover:bg-white/30">Sign Out</button>
+          </div>
+        `;
       } else {
-        window.location.href = 'index.html';
+        authSection.innerHTML = `<button onclick="showLoginModal()" class="bg-white text-orange-500 px-4 py-2 rounded-lg font-semibold hover:bg-orange-50">Sign In</button>`;
       }
+      updateCartCount();
     });
 
-    async function loadAdminData() {
+    // Load Products
+    async function loadProducts() {
+      const grid = document.getElementById('products-grid');
       try {
-        const snapshot = await db.collection('shareholders').get();
-        shareholders = [];
-        let activeCount = 0;
-        let totalCapital = 0;
-
+        const snapshot = await db.collection('products').orderBy('createdAt', 'desc').limit(12).get();
+        if (snapshot.empty) {
+          grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">No products yet. Be the first to sell!</div>';
+          return;
+        }
+        grid.innerHTML = '';
         snapshot.forEach(doc => {
-          const data = { id: doc.id, ...doc.data() };
-          shareholders.push(data);
-          if (data.status === 'active') {
-            activeCount++;
-            // Calculate capital based on activation fees
-            const fees = { 1: 5000, 2: 10000, 3: 15000, 4: 20000, 5: 25000, 6: 30000, 7: 35000, 8: 40000, 9: 45000, 10: 50000 };
-            totalCapital += fees[data.sharePercentage] || 0;
-          }
+          const product = { id: doc.id, ...doc.data() };
+          grid.innerHTML += createProductCard(product);
         });
-
-        document.getElementById('total-shareholders').textContent = shareholders.length;
-        document.getElementById('active-members').textContent = activeCount;
-        document.getElementById('total-capital').textContent = '₱' + totalCapital.toLocaleString();
-
-        renderShareholdersTable();
-        loadPendingKYC();
-        loadPendingWithdrawals();
       } catch (error) {
-        console.error('Error loading admin data:', error);
+        console.error('Error loading products:', error);
+        grid.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error loading products</div>';
       }
     }
 
-    function renderShareholdersTable() {
-      const tbody = document.getElementById('shareholders-table');
-      tbody.innerHTML = shareholders.map(sh => `
-        <tr class="border-b">
-          <td class="py-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center font-bold text-green-600">
-                ${(sh.name || 'U')[0].toUpperCase()}
-              </div>
-              <span class="font-medium">${sh.name || 'Unknown'}</span>
+    function createProductCard(product) {
+      return `
+        <a href="product.html?id=${product.id}" class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition group">
+          <div class="relative">
+            <img src="${product.image || 'https://placehold.co/200x200?text=Product'}" alt="${product.name}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform">
+            ${product.discount ? `<div class="absolute top-2 right-2 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">-${product.discount}%</div>` : ''}
+            ${product.category ? `<div class="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">${product.category}</div>` : ''}
+          </div>
+          <div class="p-3">
+            <h3 class="text-sm text-gray-800 mb-2 line-clamp-2 group-hover:text-orange-500 transition-colors">${product.name}</h3>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-orange-500 font-bold">₱${product.price?.toLocaleString() || 0}</span>
+              ${product.originalPrice && product.originalPrice !== product.price ? `<span class="text-xs text-gray-400 line-through">₱${product.originalPrice.toLocaleString()}</span>` : ''}
             </div>
-          </td>
-          <td class="py-4 text-gray-600">${sh.email || '-'}</td>
-          <td class="py-4 font-medium">${sh.sharePercentage ? sh.sharePercentage + '%' : '-'}</td>
-          <td class="py-4 text-gray-600">${sh.lockInPeriod ? sh.lockInPeriod + ' months' : '-'}</td>
-          <td class="py-4">
-            <span class="px-3 py-1 rounded-full text-sm font-medium ${sh.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
-              ${sh.status || 'Inactive'}
-            </span>
-          </td>
-          <td class="py-4">
-            <button onclick="viewShareholder('${sh.id}')" class="text-green-600 hover:underline">View</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    async function loadPendingKYC() {
-      const kycList = document.getElementById('kyc-list');
-      const pending = shareholders.filter(s => s.kycSubmitted && !s.kycVerified);
-      
-      if (pending.length === 0) {
-        kycList.innerHTML = '<p class="text-gray-500 text-center py-8">No pending KYC submissions</p>';
-        return;
-      }
-
-      kycList.innerHTML = pending.map(sh => `
-        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-          <div>
-            <p class="font-medium">${sh.name}</p>
-            <p class="text-sm text-gray-500">${sh.email}</p>
+            <div class="flex items-center justify-between text-xs text-gray-600">
+              <span>⭐ ${product.rating || 4.5}</span>
+              <span>${product.sold || 0} sold</span>
+            </div>
           </div>
-          <div class="flex gap-2">
-            <button onclick="approveKYC('${sh.id}')" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Approve</button>
-            <button onclick="rejectKYC('${sh.id}')" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Reject</button>
-          </div>
-        </div>
-      `).join('');
+        </a>
+      `;
     }
 
-    async function loadPendingWithdrawals() {
-      let pendingCount = 0;
-      const withdrawalsList = document.getElementById('withdrawals-list');
-      withdrawalsList.innerHTML = '';
-
-      for (const sh of shareholders) {
-        try {
-          const txSnapshot = await db.collection('shareholders').doc(sh.id).collection('transactions')
-            .where('type', '==', 'withdrawal')
-            .where('status', '==', 'pending')
-            .get();
-
-          txSnapshot.forEach(doc => {
-            pendingCount++;
-            const tx = doc.data();
-            withdrawalsList.innerHTML += `
-              <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div>
-                  <p class="font-medium">${sh.name}</p>
-                  <p class="text-sm text-gray-500">${tx.payoutDetails?.type || 'Unknown'} - ${tx.payoutDetails?.number || tx.payoutDetails?.accountNumber}</p>
-                </div>
-                <div class="flex items-center gap-4">
-                  <p class="text-xl font-bold">₱${tx.amount.toLocaleString()}</p>
-                  <button onclick="approveWithdrawal('${sh.id}', '${doc.id}', ${tx.amount})" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Approve</button>
-                </div>
-              </div>
-            `;
-          });
-        } catch (error) {
-          console.error('Error loading withdrawals:', error);
-        }
-      }
-
-      document.getElementById('pending-withdrawals').textContent = pendingCount;
-      
-      if (pendingCount === 0) {
-        withdrawalsList.innerHTML = '<p class="text-gray-500 text-center py-8">No pending withdrawals</p>';
-      }
+    // Auth Functions
+    function showLoginModal() {
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('login-modal').classList.add('flex');
     }
 
-    async function approveKYC(userId) {
-      if (!confirm('Approve this KYC submission?')) return;
-      try {
-        await db.collection('shareholders').doc(userId).update({
-          kycVerified: true,
-          kycVerifiedAt: new Date().toISOString()
-        });
-        alert('KYC approved!');
-        location.reload();
-      } catch (error) {
-        alert('Error: ' + error.message);
-      }
+    function hideLoginModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('login-modal').classList.remove('flex');
     }
 
-    async function rejectKYC(userId) {
-      if (!confirm('Reject this KYC submission?')) return;
-      try {
-        await db.collection('shareholders').doc(userId).update({
-          kycSubmitted: false
-        });
-        alert('KYC rejected.');
-        location.reload();
-      } catch (error) {
-        alert('Error: ' + error.message);
-      }
-    }
+    document.getElementById('close-modal').onclick = hideLoginModal;
+    document.getElementById('login-modal').onclick = (e) => {
+      if (e.target.id === 'login-modal') hideLoginModal();
+    };
 
-    async function approveWithdrawal(userId, txId, amount) {
-      if (!confirm('Approve this withdrawal?')) return;
-      try {
-        await db.collection('shareholders').doc(userId).collection('transactions').doc(txId).update({
-          status: 'completed',
-          completedAt: new Date().toISOString()
-        });
-        await db.collection('shareholders').doc(userId).update({
-          totalWithdrawn: firebase.firestore.FieldValue.increment(amount),
-          pendingWithdrawal: firebase.firestore.FieldValue.increment(-amount)
-        });
-        alert('Withdrawal approved!');
-        location.reload();
-      } catch (error) {
-        alert('Error: ' + error.message);
-      }
-    }
+    document.getElementById('show-register').onclick = () => {
+      document.getElementById('login-form').classList.toggle('hidden');
+      document.getElementById('register-form').classList.toggle('hidden');
+      document.getElementById('show-register').textContent = 
+        document.getElementById('login-form').classList.contains('hidden') 
+          ? 'Already have an account? Sign In' 
+          : "Don't have an account? Sign Up";
+    };
 
-    document.getElementById('earnings-form').onsubmit = async (e) => {
+    document.getElementById('login-form').onsubmit = async (e) => {
       e.preventDefault();
-      
-      const totalProfit = parseFloat(document.getElementById('profit-amount').value);
-      const description = document.getElementById('earning-description').value;
-
-      if (!confirm(`Distribute ₱${totalProfit.toLocaleString()} to all active members?`)) return;
-
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
       try {
-        const activeMembers = shareholders.filter(s => s.status === 'active');
-        
-        for (const member of activeMembers) {
-          const sharePercent = member.sharePercentage || 0;
-          const lockInBonus = { 6: 1, 12: 1.2, 24: 1.4, 36: 1.7 }[member.lockInPeriod] || 1;
-          const earning = (totalProfit * (sharePercent / 100)) * lockInBonus;
-
-          await db.collection('shareholders').doc(member.id).update({
-            totalEarnings: firebase.firestore.FieldValue.increment(earning)
-          });
-
-          await db.collection('shareholders').doc(member.id).collection('transactions').add({
-            type: 'earning',
-            amount: earning,
-            description,
-            date: new Date().toISOString()
-          });
-
-          await db.collection('shareholders').doc(member.id).collection('earnings').add({
-            amount: earning,
-            description,
-            date: new Date().toISOString()
-          });
-        }
-
-        alert(`Successfully distributed earnings to ${activeMembers.length} members!`);
-        document.getElementById('earnings-form').reset();
+        await auth.signInWithEmailAndPassword(email, password);
+        hideLoginModal();
+        alert('Signed in successfully!');
       } catch (error) {
         alert('Error: ' + error.message);
       }
     };
 
-    function showTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('text-green-600', 'border-b-2', 'border-green-600');
-        el.classList.add('text-gray-500');
-      });
-
-      document.getElementById(tabName + '-tab').classList.remove('hidden');
-      document.querySelector(`[data-tab="${tabName}"]`).classList.add('text-green-600', 'border-b-2', 'border-green-600');
-      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('text-gray-500');
-    }
-
-    function viewShareholder(id) {
-      const sh = shareholders.find(s => s.id === id);
-      alert(JSON.stringify(sh, null, 2));
-    }
+    document.getElementById('register-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      try {
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        await user.updateProfile({ displayName: name });
+        await db.collection('users').doc(user.uid).set({
+          name, email, createdAt: new Date().toISOString(), followers: [], following: []
+        });
+        hideLoginModal();
+        alert('Account created successfully!');
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    };
 
     function signOut() {
-      auth.signOut().then(() => {
-        window.location.href = 'index.html';
-      });
+      auth.signOut();
+      alert('Signed out successfully!');
     }
 
-    // Search functionality
-    document.getElementById('search-shareholders').oninput = (e) => {
-      const query = e.target.value.toLowerCase();
-      const filtered = shareholders.filter(s => 
-        (s.name || '').toLowerCase().includes(query) || 
-        (s.email || '').toLowerCase().includes(query)
-      );
-      const tbody = document.getElementById('shareholders-table');
-      tbody.innerHTML = filtered.map(sh => `
-        <tr class="border-b">
-          <td class="py-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center font-bold text-green-600">
-                ${(sh.name || 'U')[0].toUpperCase()}
-              </div>
-              <span class="font-medium">${sh.name || 'Unknown'}</span>
-            </div>
-          </td>
-          <td class="py-4 text-gray-600">${sh.email || '-'}</td>
-          <td class="py-4 font-medium">${sh.sharePercentage ? sh.sharePercentage + '%' : '-'}</td>
-          <td class="py-4 text-gray-600">${sh.lockInPeriod ? sh.lockInPeriod + ' months' : '-'}</td>
-          <td class="py-4">
-            <span class="px-3 py-1 rounded-full text-sm font-medium ${sh.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
-              ${sh.status || 'Inactive'}
-            </span>
-          </td>
-          <td class="py-4">
-            <button onclick="viewShareholder('${sh.id}')" class="text-green-600 hover:underline">View</button>
-          </td>
-        </tr>
-      `).join('');
-    };
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = count;
+    }
+
+    // Initialize
+    loadProducts();
   </script>
 </body>
 </html>
