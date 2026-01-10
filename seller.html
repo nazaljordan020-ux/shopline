@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Center - ShopLine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-btn { background: linear-gradient(to right, #f97316, #ef4444); }
+    .gradient-btn:hover { background: linear-gradient(to right, #ea580c, #dc2626); }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="text-2xl font-bold">ShopLine</a>
+        <nav class="flex items-center space-x-6">
+          <a href="marketplace.html" class="hover:text-orange-200">Marketplace</a>
+          <a href="cart.html" class="hover:text-orange-200">Cart</a>
+          <a href="seller.html" class="hover:text-orange-200 font-semibold">Seller Center</a>
+          <a href="orders.html" class="hover:text-orange-200">Orders</a>
+          <div id="auth-section"></div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Auth Required -->
+    <div id="auth-required" class="hidden bg-white rounded-lg shadow-lg p-12 text-center">
+      <div class="text-6xl mb-4">🔐</div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Sign In Required</h2>
+      <p class="text-gray-500 mb-6">Please sign in to access the Seller Center</p>
+      <a href="index.html" class="inline-block gradient-btn text-white px-6 py-3 rounded-lg font-semibold">Sign In</a>
+    </div>
+
+    <!-- Seller Dashboard -->
+    <div id="seller-dashboard" class="hidden">
+      <!-- Seller Header -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div id="seller-avatar" class="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center">
+              <span class="text-white text-3xl font-bold">S</span>
+            </div>
+            <div>
+              <h1 id="seller-name" class="text-2xl font-bold text-gray-800">My Shop</h1>
+              <p id="seller-stats" class="text-gray-600">0 Followers | 0 Products</p>
+            </div>
+          </div>
+          <button onclick="toggleSettings()" class="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Settings
+          </button>
+        </div>
+
+        <!-- Contact Settings -->
+        <div id="settings-panel" class="hidden mt-6 p-4 bg-gray-50 rounded-lg">
+          <h3 class="font-semibold mb-4">Contact Information</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
+              <input type="url" id="facebook-url" placeholder="https://facebook.com/yourpage" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input type="tel" id="phone-number" placeholder="+63 XXX XXX XXXX" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+            </div>
+          </div>
+          <button onclick="saveContactInfo()" class="mt-4 gradient-btn text-white px-6 py-2 rounded-lg">Save Contact Info</button>
+        </div>
+      </div>
+
+      <!-- New Orders Alert -->
+      <div id="orders-alert" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <p class="text-yellow-700 font-medium">You have <span id="new-order-count">0</span> new order(s) waiting to be shipped!</p>
+          <a href="orders.html" class="ml-auto text-orange-500 hover:underline">View Orders →</a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6">
+        <!-- Upload Product Form -->
+        <div class="col-span-2 bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            Upload New Product
+          </h2>
+
+          <form id="product-form" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Name *</label>
+                <input type="text" id="product-name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Category *</label>
+                <select id="product-category" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+                  <option value="">Select category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Fashion">Fashion & Apparel</option>
+                  <option value="Home">Home & Living</option>
+                  <option value="Beauty">Beauty & Personal Care</option>
+                  <option value="Sports">Sports & Outdoors</option>
+                  <option value="Food">Food & Beverages</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Price (₱) *</label>
+                <input type="number" id="product-price" min="1" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Stock *</label>
+                <input type="number" id="product-stock" min="1" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Discount (%)</label>
+                <input type="number" id="product-discount" min="0" max="99" value="0" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500">
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image *</label>
+              <div id="upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-orange-500 transition">
+                <input type="file" id="image-input" accept="image/*" class="hidden">
+                <div id="upload-placeholder">
+                  <svg class="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  <p class="text-gray-500">Click or drag to upload image</p>
+                  <p class="text-sm text-gray-400">PNG, JPG up to 5MB</p>
+                </div>
+                <div id="upload-preview" class="hidden">
+                  <img id="preview-image" class="max-h-48 mx-auto rounded-lg">
+                  <p id="upload-status" class="text-sm text-green-600 mt-2"></p>
+                </div>
+              </div>
+              <div id="upload-progress" class="hidden mt-2">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div id="progress-bar" class="bg-orange-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+                <p id="progress-text" class="text-sm text-gray-500 mt-1">Uploading... 0%</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Description *</label>
+              <textarea id="product-description" rows="3" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-500"></textarea>
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full gradient-btn text-white py-3 rounded-lg font-semibold">Upload Product</button>
+          </form>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Recent Orders</h2>
+          <div id="recent-orders">
+            <p class="text-gray-500 text-center py-8">No orders yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Products -->
+      <div class="mt-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">My Products (<span id="product-count">0</span>)</h2>
+        <div id="my-products" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div class="col-span-full bg-white rounded-lg p-8 text-center">
+            <p class="text-gray-500">No products uploaded yet. Upload your first product above!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo4y9nmVryC29QJMF66pA-pjo-tWAoeDY",
+      authDomain: "shopline-7a14f.firebaseapp.com",
+      projectId: "shopline-7a14f",
+      storageBucket: "shopline-7a14f.firebasestorage.app",
+      messagingSenderId: "1064176765834",
+      appId: "1:1064176765834:web:f30944d3768599d137d673",
+      measurementId: "G-49Q3CBV09C"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    let currentUser = null;
+    let uploadedImageUrl = '';
+    let unsubscribeOrders = null;
+
+    // Auth State
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      const authSection = document.getElementById('auth-section');
+      
+      if (user) {
+        authSection.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-sm">${user.displayName || user.email}</span>
+            <button onclick="auth.signOut()" class="bg-white/20 px-3 py-1 rounded hover:bg-white/30">Sign Out</button>
+          </div>
+        `;
+        document.getElementById('auth-required').classList.add('hidden');
+        document.getElementById('seller-dashboard').classList.remove('hidden');
+        
+        // Update seller info
+        document.getElementById('seller-avatar').innerHTML = `<span class="text-white text-3xl font-bold">${(user.displayName || user.email || 'S')[0].toUpperCase()}</span>`;
+        document.getElementById('seller-name').textContent = user.displayName || 'My Shop';
+        
+        loadUserData();
+        loadProducts();
+        setupOrderNotifications();
+      } else {
+        authSection.innerHTML = `<a href="index.html" class="bg-white text-orange-500 px-4 py-2 rounded-lg font-semibold hover:bg-orange-50">Sign In</a>`;
+        document.getElementById('auth-required').classList.remove('hidden');
+        document.getElementById('seller-dashboard').classList.add('hidden');
+        if (unsubscribeOrders) unsubscribeOrders();
+      }
+    });
+
+    async function loadUserData() {
+      try {
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById('facebook-url').value = data.facebookUrl || '';
+          document.getElementById('phone-number').value = data.phoneNumber || '';
+          document.getElementById('seller-stats').textContent = `${data.followers?.length || 0} Followers | Loading products...`;
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    }
+
+    async function loadProducts() {
+      try {
+        const snapshot = await db.collection('products')
+          .where('sellerId', '==', currentUser.uid)
+          .orderBy('createdAt', 'desc')
+          .get();
+
+        const products = [];
+        snapshot.forEach(doc => products.push({ id: doc.id, ...doc.data() }));
+
+        document.getElementById('product-count').textContent = products.length;
+        document.getElementById('seller-stats').textContent = document.getElementById('seller-stats').textContent.replace(/Loading products\.\.\.|\d+ Products/, `${products.length} Products`);
+
+        const grid = document.getElementById('my-products');
+        if (products.length === 0) {
+          grid.innerHTML = `<div class="col-span-full bg-white rounded-lg p-8 text-center"><p class="text-gray-500">No products uploaded yet. Upload your first product above!</p></div>`;
+        } else {
+          grid.innerHTML = products.map(p => `
+            <a href="product.html?id=${p.id}" class="bg-white rounded overflow-hidden shadow hover:shadow-lg transition">
+              <img src="${p.image || 'https://placehold.co/200x128?text=Product'}" alt="${p.name}" class="w-full h-32 object-cover">
+              <div class="p-2">
+                <p class="text-xs text-gray-800 mb-1 line-clamp-2">${p.name}</p>
+                <p class="text-orange-500 font-bold text-sm">₱${p.price?.toLocaleString() || 0}</p>
+                <p class="text-xs text-gray-500">Stock: ${p.stock || 0}</p>
+              </div>
+            </a>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    }
+
+    function setupOrderNotifications() {
+      unsubscribeOrders = db.collection('orders')
+        .where('sellerId', '==', currentUser.uid)
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(snapshot => {
+          const orders = [];
+          let newCount = 0;
+          
+          snapshot.forEach(doc => {
+            const order = { id: doc.id, ...doc.data() };
+            orders.push(order);
+            if (order.status === 'To Ship') newCount++;
+          });
+
+          // Show alert if new orders
+          const alertDiv = document.getElementById('orders-alert');
+          if (newCount > 0) {
+            alertDiv.classList.remove('hidden');
+            document.getElementById('new-order-count').textContent = newCount;
+          } else {
+            alertDiv.classList.add('hidden');
+          }
+
+          // Update recent orders
+          const ordersDiv = document.getElementById('recent-orders');
+          if (orders.length === 0) {
+            ordersDiv.innerHTML = '<p class="text-gray-500 text-center py-8">No orders yet</p>';
+          } else {
+            ordersDiv.innerHTML = orders.slice(0, 5).map(order => `
+              <div class="p-3 bg-gray-50 rounded-lg mb-2">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <p class="font-medium text-sm">${order.buyerName || 'Unknown'}</p>
+                    <p class="text-xs text-gray-500">${order.items?.length || 0} items</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-bold text-orange-500">₱${order.total?.toFixed(2) || 0}</p>
+                    <span class="text-xs px-2 py-1 rounded ${
+                      order.status === 'To Ship' ? 'bg-yellow-100 text-yellow-800' :
+                      order.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                    }">${order.status}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('') + `<a href="orders.html" class="block text-center text-orange-500 hover:underline mt-4">View All Orders →</a>`;
+          }
+        });
+    }
+
+    function toggleSettings() {
+      document.getElementById('settings-panel').classList.toggle('hidden');
+    }
+
+    async function saveContactInfo() {
+      const facebookUrl = document.getElementById('facebook-url').value;
+      const phoneNumber = document.getElementById('phone-number').value;
+
+      try {
+        await db.collection('users').doc(currentUser.uid).update({
+          facebookUrl,
+          phoneNumber
+        });
+        alert('Contact info updated!');
+        toggleSettings();
+      } catch (error) {
+        alert('Failed to update contact info');
+      }
+    }
+
+    // Image Upload
+    const uploadArea = document.getElementById('upload-area');
+    const imageInput = document.getElementById('image-input');
+
+    uploadArea.onclick = () => imageInput.click();
+
+    uploadArea.ondragover = (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('border-orange-500', 'bg-orange-50');
+    };
+
+    uploadArea.ondragleave = () => {
+      uploadArea.classList.remove('border-orange-500', 'bg-orange-50');
+    };
+
+    uploadArea.ondrop = (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('border-orange-500', 'bg-orange-50');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        handleImageUpload(file);
+      }
+    };
+
+    imageInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) handleImageUpload(file);
+    };
+
+    async function handleImageUpload(file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('upload-placeholder').classList.add('hidden');
+        document.getElementById('upload-preview').classList.remove('hidden');
+        document.getElementById('preview-image').src = e.target.result;
+        document.getElementById('upload-status').textContent = 'Uploading...';
+      };
+      reader.readAsDataURL(file);
+
+      // Show progress
+      document.getElementById('upload-progress').classList.remove('hidden');
+
+      try {
+        const fileName = `products/${currentUser.uid}/${Date.now()}_${file.name}`;
+        const storageRef = storage.ref(fileName);
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `Uploading... ${Math.round(progress)}%`;
+          },
+          (error) => {
+            alert('Upload failed: ' + error.message);
+            document.getElementById('upload-progress').classList.add('hidden');
+          },
+          async () => {
+            uploadedImageUrl = await uploadTask.snapshot.ref.getDownloadURL();
+            document.getElementById('upload-status').textContent = 'Upload complete!';
+            document.getElementById('upload-progress').classList.add('hidden');
+          }
+        );
+      } catch (error) {
+        alert('Upload failed: ' + error.message);
+      }
+    }
+
+    // Product Form
+    document.getElementById('product-form').onsubmit = async (e) => {
+      e.preventDefault();
+      
+      if (!uploadedImageUrl) {
+        alert('Please upload a product image');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Uploading...';
+
+      try {
+        const price = parseFloat(document.getElementById('product-price').value);
+        const discount = parseInt(document.getElementById('product-discount').value) || 0;
+        const originalPrice = discount > 0 ? Math.round(price / (1 - discount / 100)) : price;
+
+        await db.collection('products').add({
+          name: document.getElementById('product-name').value,
+          category: document.getElementById('product-category').value,
+          price,
+          stock: parseInt(document.getElementById('product-stock').value),
+          discount,
+          originalPrice,
+          image: uploadedImageUrl,
+          description: document.getElementById('product-description').value,
+          rating: 4.5,
+          sold: 0,
+          sellerId: currentUser.uid,
+          sellerName: currentUser.displayName || currentUser.email,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('Product uploaded successfully!');
+
+        // Reset form
+        document.getElementById('product-form').reset();
+        document.getElementById('upload-placeholder').classList.remove('hidden');
+        document.getElementById('upload-preview').classList.add('hidden');
+        uploadedImageUrl = '';
+
+        loadProducts();
+      } catch (error) {
+        alert('Failed to upload product: ' + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload Product';
+      }
+    };
+  </script>
+</body>
+</html>
